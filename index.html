@@ -3,1592 +3,734 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#1A7A4A">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Medoq">
-<title>Medoq</title>
-<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f0f10">
+<title>Système de Pilotage — Amadou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --green:#1A7A4A;--dkgreen:#155D38;--ltgreen:#E8F5EE;--midgreen:#2E9E64;
-  --red:#E53935;--orange:#F57C00;--blue:#1565C0;
-  --black:#1A1A1A;--gray:#4A4A4A;--lgray:#F5F5F5;--mgray:#E0E0E0;
-  --white:#FFFFFF;--shadow:0 2px 12px rgba(0,0,0,.10);
-  --radius:14px;--radius-sm:8px;
-  --font:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --bg:#0e0e10; --bg2:#141417; --panel:#17171b; --panel2:#1c1c21;
+  --line:#2a2a31; --line2:#34343c;
+  --txt:#ece9e2; --txt2:#a6a39b; --txt3:#706d66;
+  --gold:#c9a24a; --gold-b:#e8cd7e; --gold-dim:#5c4a22;
+  --green:#7bbf6a; --green-bg:#1c2a1a; --red:#d27a6e; --red-bg:#2a1a18;
+  --amber:#d9a441; --amber-bg:#2a2113; --blue:#7aa6c2;
+  --r:16px; --r2:12px;
+  --disp:'Fraunces',Georgia,serif; --body:'Manrope',-apple-system,sans-serif;
 }
-html{height:100%;height:-webkit-fill-available;overflow-x:hidden;width:100%}
-body{height:100%;min-height:-webkit-fill-available;overflow:hidden;overflow-x:hidden;width:100%;font-family:var(--font);background:#F0F4F1;color:var(--black)}
-#app{height:100vh;height:100dvh;display:flex;flex-direction:column;width:100%;max-width:480px;margin:0 auto;background:var(--white);position:relative;overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,.1)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--txt);font-family:var(--body);font-size:16px;line-height:1.5}
+body{
+  max-width:720px;margin:0 auto;padding:0 0 96px;min-height:100vh;
+  background:
+    radial-gradient(900px 500px at 80% -8%, rgba(201,162,74,.10), transparent 60%),
+    radial-gradient(700px 400px at -10% 12%, rgba(122,166,194,.05), transparent 55%),
+    var(--bg);
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.wrap{position:relative;z-index:1;padding:0 16px}
 
-.screen{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;background:var(--white);transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s;will-change:transform}
-.screen.hidden{transform:translateX(100%);pointer-events:none;opacity:0}
-.screen.slide-left{transform:translateX(-30%);pointer-events:none;opacity:0}
-body.notransition .screen{transition:none !important;}
+/* Header */
+header{padding:26px 16px 16px;position:relative;z-index:1}
+.kicker{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px}
+h1{font-family:var(--disp);font-weight:600;font-size:30px;line-height:1.05;letter-spacing:-.01em}
+h1 em{font-style:italic;color:var(--gold-b)}
+.datebar{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--txt2);font-size:13px}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.savetag{margin-left:auto;font-size:11px;color:var(--txt3);transition:.3s}
+.savetag.on{color:var(--green)}
 
-.topbar{display:flex;align-items:center;padding:16px 16px 12px;background:var(--white);border-bottom:1px solid var(--mgray);flex-shrink:0;min-height:60px}
-.topbar-title{font-size:17px;font-weight:700;color:var(--black);flex:1;text-align:center}
-.topbar-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--lgray);border:none;cursor:pointer;font-size:18px;color:var(--gray)}
-.topbar-btn:active{background:var(--mgray)}
-.topbar-logo{font-size:22px;font-weight:800;color:var(--black);flex:1}
-.topbar-logo span{color:var(--green)}
+/* Tabs */
+nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(15,15,17,.92);backdrop-filter:blur(16px);border-top:1px solid var(--line);max-width:720px;margin:0 auto}
+.tabscroll{display:flex;overflow-x:auto;scrollbar-width:none;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+.tabscroll::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 11px;border-radius:12px;background:none;border:0;color:var(--txt3);cursor:pointer;font-family:var(--body);min-width:62px;transition:.18s}
+.tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7}
+.tab span{font-size:10px;font-weight:600;letter-spacing:.01em;white-space:nowrap}
+.tab.active{color:var(--gold-b)}
+.tab.active svg{stroke:var(--gold-b)}
 
-.bnav{display:flex;background:var(--white);border-top:1px solid var(--mgray);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
-.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;border:none;background:none;cursor:pointer;gap:3px;color:var(--gray);font-size:10px;font-family:var(--font)}
-.bnav-item.active{color:var(--green)}
-.bnav-item .icon{font-size:22px}
-.bnav-item.active .icon{transform:translateY(-2px)}
+/* Sections */
+section{display:none;animation:fade .35s ease}
+section.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sechead{font-family:var(--disp);font-size:22px;font-weight:600;margin:4px 0 14px;letter-spacing:-.01em}
+.sechead em{font-style:italic;color:var(--gold-b)}
 
-.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:16px}
-.scroll::-webkit-scrollbar{display:none}
+/* Cards & panels */
+.panel{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.panel.gold{border-color:var(--gold-dim);background:linear-gradient(180deg,rgba(201,162,74,.07),var(--bg2))}
+.plabel{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt3);font-weight:700;margin-bottom:10px}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.metric{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--r2);padding:14px}
+.metric .v{font-family:var(--disp);font-size:30px;font-weight:600;line-height:1;color:var(--gold-b)}
+.metric .l{font-size:12px;color:var(--txt2);margin-top:6px}
+.metric .s{font-size:11px;color:var(--txt3);margin-top:2px}
+.bar{height:6px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:9px}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-b));border-radius:4px;transition:width .5s}
 
-.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin:12px 16px;overflow:hidden}
-.card-body{padding:16px}
-.card-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--lgray);cursor:pointer}
-.card-row:last-child{border-bottom:none}
+/* Inputs */
+input,textarea,select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--txt);font-family:var(--body);font-size:15px;padding:11px 12px;transition:.15s;-webkit-appearance:none}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);background:#101013}
+textarea{resize:vertical;min-height:46px;line-height:1.45}
+select{background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a24a' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 12px center}
+label.fld{display:block;margin-bottom:10px}
+label.fld>span{display:block;font-size:12px;color:var(--txt2);margin-bottom:5px;font-weight:600;letter-spacing:.01em}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 
-.input-wrap{position:relative;margin:0 16px 12px}
-.input-wrap .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none}
-input,textarea,select{width:100%;padding:14px 14px 14px 44px;border:1.5px solid var(--mgray);border-radius:var(--radius-sm);font-size:15px;font-family:var(--font);outline:none;background:var(--white);color:var(--black);transition:border-color .2s}
-input:focus,select:focus{border-color:var(--green)}
-input.no-icon,select.no-icon{padding-left:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(180deg,var(--gold-b),var(--gold));color:#1c1605;border:0;border-radius:11px;font-family:var(--body);font-weight:700;font-size:15px;padding:12px 18px;cursor:pointer;width:100%;transition:.15s}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:none;border:1px solid var(--line2);color:var(--txt)}
+.btn.sm{width:auto;padding:8px 14px;font-size:13px;border-radius:9px}
+.btnrow{display:flex;gap:8px}
 
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:var(--radius-sm);border:none;font-size:16px;font-weight:700;font-family:var(--font);cursor:pointer;transition:opacity .15s,transform .1s}
-.btn:active{opacity:.85;transform:scale(.98)}
-.btn-primary{background:var(--green);color:var(--white)}
-.btn-outline{background:var(--white);color:var(--green);border:1.5px solid var(--green)}
-.btn-danger{background:var(--red);color:var(--white)}
-.btn-sm{padding:10px 16px;font-size:14px;width:auto;border-radius:20px}
-.btn-wrap{padding:12px 16px}
+/* List items */
+.item{background:var(--panel);border:1px solid var(--line);border-radius:var(--r2);padding:14px;margin-bottom:10px;position:relative}
+.item h4{font-size:15px;font-weight:700;margin-bottom:4px;padding-right:30px}
+.item .meta{font-size:12px;color:var(--txt2);line-height:1.5}
+.item .meta b{color:var(--txt);font-weight:600}
+.del{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:8px;background:var(--bg);border:1px solid var(--line);color:var(--txt3);cursor:pointer;font-size:14px;line-height:1}
+.del:active{background:var(--red-bg);color:var(--red)}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.02em}
+.pill.cle,.pill.haute,.pill.actif,.pill.atteint,.pill.lance{background:var(--green-bg);color:var(--green);border:1px solid #2c4527}
+.pill.important,.pill.moyenne,.pill.encours,.pill.exploration,.pill.relancer{background:var(--amber-bg);color:var(--amber);border:1px solid #44380f}
+.pill.secondaire,.pill.basse,.pill.attente,.pill.idee,.pill.reporte{background:var(--bg);color:var(--txt2);border:1px solid var(--line2)}
+.pill.inactif,.pill.abandonne,.pill.nonatteint{background:var(--red-bg);color:var(--red);border:1px solid #44241f}
 
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
-.badge-green{background:var(--ltgreen);color:var(--dkgreen)}
-.badge-orange{background:#FFF3E0;color:var(--orange)}
-.badge-red{background:#FFEBEE;color:var(--red)}
-.badge-blue{background:#E3F2FD;color:var(--blue)}
-.badge-gray{background:var(--lgray);color:var(--gray)}
-.badge-purple{background:#F3E5F5;color:#6A1B9A}
+/* Habits grid */
+.htable{width:100%;border-collapse:collapse;font-size:13px}
+.htable th{font-size:10px;color:var(--txt3);font-weight:700;padding:6px 2px;text-transform:uppercase}
+.htable td{padding:5px 2px;text-align:center;border-top:1px solid var(--line)}
+.htable td.hn{text-align:left;font-size:13px;font-weight:600;max-width:108px;color:var(--txt)}
+.hcell{width:30px;height:30px;border-radius:8px;border:1px solid var(--line2);background:var(--bg);font-size:14px;cursor:pointer;color:var(--txt3);margin:0 auto;display:flex;align-items:center;justify-content:center;transition:.12s}
+.hcell.y{background:var(--green-bg);border-color:#2c4527;color:var(--green)}
+.hcell.n{background:var(--red-bg);border-color:#44241f;color:var(--red)}
+.hsc{font-weight:700;color:var(--gold-b);font-family:var(--disp)}
+.weeknav{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.weeknav button{width:40px;height:40px;border-radius:11px;background:var(--panel);border:1px solid var(--line);color:var(--gold);font-size:18px;cursor:pointer}
+.weeknav .wk{flex:1;text-align:center}
+.weeknav .wk b{display:block;font-family:var(--disp);font-size:16px}
+.weeknav .wk span{font-size:12px;color:var(--txt2)}
 
-.section-label{padding:16px 16px 8px;font-size:12px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.8px}
+/* Vision list */
+.vlist{list-style:none}
+.vlist li{padding:9px 0 9px 26px;position:relative;border-bottom:1px solid var(--line);font-size:15px}
+.vlist li:last-child{border:0}
+.vlist li::before{content:"";position:absolute;left:4px;top:16px;width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.vlist.num{counter-reset:r}
+.vlist.num li{padding-left:34px}
+.vlist.num li::before{counter-increment:r;content:counter(r);background:none;color:var(--gold);font-family:var(--disp);font-weight:700;font-size:15px;width:auto;height:auto;top:9px;left:4px}
 
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 32px;gap:12px;color:var(--gray)}
-.empty .emoji{font-size:52px}
-.empty p{font-size:15px;text-align:center;line-height:1.5}
+/* Reminders */
+.rgroup{margin-bottom:8px}
+.rrow{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.rrow:last-child{border:0}
+.rtime{font-family:var(--disp);font-weight:600;color:var(--gold-b);font-size:14px;min-width:54px}
+.rtxt{flex:1;font-size:14px}
+.rfreq{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;align-self:center}
 
-#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--black);color:var(--white);padding:12px 20px;border-radius:24px;font-size:14px;white-space:nowrap;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;max-width:90vw;text-align:center}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-#demo-badge{display:none;position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#1A3C5E;color:#fff;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;z-index:9998;align-items:center;gap:5px;white-space:nowrap}
-
-.loader{display:flex;align-items:center;justify-content:center;padding:40px}
-.spinner{width:36px;height:36px;border:3px solid var(--ltgreen);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
-
-.avatar{width:44px;height:44px;border-radius:50%;background:var(--ltgreen);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--green);font-weight:700;flex-shrink:0}
-
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 12px}
-.stat-box{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:4px}
-.stat-val{font-size:28px;font-weight:800;color:var(--green)}
-.stat-lbl{font-size:12px;color:var(--gray)}
-
-.tabs{display:flex;gap:8px;padding:12px 16px;overflow-x:auto;flex-shrink:0}
-.tabs::-webkit-scrollbar{display:none}
-.tab{padding:8px 18px;border-radius:20px;border:1.5px solid var(--mgray);background:var(--white);font-size:13px;font-weight:600;color:var(--gray);white-space:nowrap;cursor:pointer;font-family:var(--font)}
-.tab.active{background:var(--green);color:var(--white);border-color:var(--green)}
-
-.ph-card{margin:0 16px 12px;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-.ph-card-head{display:flex;align-items:center;gap:12px;padding:14px 16px 10px}
-.ph-icon{width:44px;height:44px;border-radius:var(--radius-sm);background:var(--ltgreen);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.ph-card-body{padding:0 16px 10px}
-.ph-info-row{display:flex;gap:8px;font-size:13px;color:var(--gray);align-items:center;flex-wrap:wrap}
-.ph-actions{display:flex;gap:8px;padding:0 16px 14px}
-
-#screen-login{overflow-y:auto;background:linear-gradient(160deg,#f0f9f4 0%,var(--white) 60%)}
-.login-logo{text-align:center;padding:0 0 32px}
-.login-logo .big{font-size:52px;font-weight:900;color:var(--black)}
-.login-logo .big span{color:var(--green)}
-.login-logo .sub{font-size:15px;color:var(--gray);margin-top:4px}
-.login-role{display:flex;gap:0;margin:0 16px 20px;border-radius:var(--radius-sm);overflow:hidden;border:1.5px solid var(--mgray)}
-.role-btn{flex:1;padding:12px;border:none;background:var(--white);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--gray);transition:all .2s}
-.role-btn.active{background:var(--green);color:var(--white)}
-
-.stock-item{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--lgray);gap:12px}
-.stock-item:last-child{border-bottom:none}
-.stock-qty{font-size:18px;font-weight:800;color:var(--green);min-width:36px;text-align:right}
-.stock-qty.low{color:var(--orange)}
-.stock-qty.empty{color:var(--red)}
-
-.resa-card{margin:0 16px 12px;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-.resa-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 8px}
-.resa-ref{font-size:12px;font-weight:700;color:var(--gray);letter-spacing:.5px}
-.resa-body{padding:0 16px 14px}
-.resa-med{font-size:16px;font-weight:700;color:var(--black)}
-.resa-ph{font-size:13px;color:var(--gray);margin-top:2px}
-.resa-footer{display:flex;gap:8px;padding:8px 16px 14px;border-top:1px solid var(--lgray);flex-wrap:wrap}
-
-.divider{height:8px;background:var(--lgray)}
-
-.notif-row{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--lgray);cursor:pointer}
-.notif-row:active{background:var(--lgray)}
-.notif-unread{background:#F0F8F4}
-
-.med-card-h{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--lgray);cursor:pointer}
-.med-card-h:active{background:var(--lgray)}
-
-.guard-badge{display:inline-flex;align-items:center;gap:3px;background:#FFEBEE;color:var(--red);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.empty{text-align:center;color:var(--txt3);font-size:14px;padding:24px 10px;font-style:italic}
+.editline{font-size:13px;color:var(--gold);cursor:pointer;font-weight:600;margin-top:8px;display:inline-block}
+.totrow{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.totrow b{font-family:var(--disp);font-size:16px}
+.foot{text-align:center;color:var(--txt3);font-size:12px;padding:20px 0 8px}
+.hint{font-size:12px;color:var(--txt3);margin:-4px 0 12px;line-height:1.5}
+details.add{margin-bottom:14px}
+details.add>summary{list-style:none;cursor:pointer}
+details.add>summary::-webkit-details-marker{display:none}
+.addbtn{display:flex;align-items:center;gap:8px;justify-content:center;background:var(--panel);border:1px dashed var(--line2);color:var(--gold-b);border-radius:12px;padding:13px;font-weight:700;font-size:14px}
+details.add[open] .addbtn{border-style:solid;background:var(--panel2)}
+.form{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:10px}
+.toolbtn{font-size:11px;color:var(--txt3);background:none;border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer;font-family:var(--body)}
+.toolrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
 </style>
 </head>
-<body class="notransition">
-<div id="app">
+<body>
+<header>
+  <div class="kicker">Système de pilotage</div>
+  <h1>Amadou <em>Niang</em></h1>
+  <div class="datebar"><span class="dot"></span><span id="today"></span><span class="savetag" id="savetag">sauvegarde auto</span></div>
+</header>
 
-<!-- ══════════ LOGIN ══════════ -->
-<div class="screen" id="screen-login">
-  <div style="padding:40px 0 32px;min-height:100%">
-    <div class="login-logo">
-      <div class="big">Med<span>oq</span></div>
-      <div class="sub">Votre médicament. Réservé. Prêt.</div>
-    </div>
-    <div class="login-role">
-      <button class="role-btn active" id="role-patient" onclick="setRole('patient')">👤 Patient</button>
-      <button class="role-btn" id="role-pharma" onclick="setRole('pharmacie')">🏥 Pharmacie</button>
-    </div>
-    <div class="input-wrap"><span class="icon">📱</span>
-      <input type="tel" id="login-phone" placeholder="Numéro de téléphone" value="+221770000001">
-    </div>
-    <div class="input-wrap"><span class="icon">🔒</span>
-      <input type="password" id="login-pass" placeholder="Mot de passe" value="password123">
-    </div>
-    <div class="btn-wrap"><button class="btn btn-primary" onclick="doLogin()">Se connecter</button></div>
-    <p style="text-align:center;font-size:13px;color:var(--gray);padding:8px 16px 4px">
-      Pas encore inscrit ? <span style="color:var(--green);font-weight:600;cursor:pointer" onclick="toast('Inscription bientôt disponible')">Créer un compte</span>
-    </p>
-    <p style="text-align:center;font-size:12px;color:var(--mgray);padding:20px 16px 0">
-      Démo : patient (+221770000001) · pharmacie (+221770000002)
-    </p>
-  </div>
-</div>
+<div class="wrap">
 
-<!-- ══════════ PATIENT — HOME ══════════ -->
-<div class="screen hidden" id="screen-home">
-  <div class="topbar">
-    <div class="topbar-logo">Med<span>oq</span></div>
-    <div style="display:flex;gap:8px">
-      <button class="topbar-btn" id="notif-btn" onclick="openNotifs()">🔔</button>
-      <button class="topbar-btn" onclick="switchTab('profile')">👤</button>
-    </div>
+<!-- DASHBOARD -->
+<section id="dashboard" class="active">
+  <div class="panel gold">
+    <div class="plabel">Ma règle du jour</div>
+    <div id="ruleView" style="font-family:var(--disp);font-size:19px;line-height:1.3"></div>
+    <span class="editline" onclick="editRule()">modifier ma règle</span>
   </div>
-  <div class="scroll" id="home-scroll">
-    <div style="padding:20px 16px 8px">
-      <div style="font-size:14px;color:var(--gray)">Bonjour 👋</div>
-      <div style="font-size:20px;font-weight:800;color:var(--black);margin-top:2px" id="home-name">—</div>
+  <div class="panel">
+    <div class="plabel">Focus aujourd'hui</div>
+    <textarea id="focusInput" placeholder="Écris ton objectif principal du jour…" oninput="saveFocus()"></textarea>
+  </div>
+  <div class="plabel" style="margin:18px 4px 10px">Métriques — semaine en cours</div>
+  <div class="metrics">
+    <div class="metric"><div class="v" id="mHab">—</div><div class="l">Habitudes complètes</div><div class="s" id="mHabSub"></div><div class="bar"><i id="mHabBar"></i></div></div>
+    <div class="metric"><div class="v" id="mPct">—</div><div class="l">% réussite habitudes</div><div class="s">cette semaine</div><div class="bar"><i id="mPctBar"></i></div></div>
+    <div class="metric"><div class="v" id="mEner">—</div><div class="l">Énergie moyenne</div><div class="s">7 derniers jours · /10</div></div>
+    <div class="metric"><div class="v" id="mRevue">—</div><div class="l">Note revue hebdo</div><div class="s">dernière revue · /10</div></div>
+  </div>
+  <div class="metrics">
+    <div class="metric"><div class="v" id="mRev" style="color:var(--green)">—</div><div class="l">Revenus cumulés (€)</div></div>
+    <div class="metric"><div class="v" id="mDep" style="color:var(--red)">—</div><div class="l">Dépenses cumulées (€)</div></div>
+  </div>
+  <div class="panel">
+    <div class="plabel">Données & sauvegarde</div>
+    <p class="hint">Tout est gardé sur ton téléphone, même hors connexion. Exporte une copie de temps en temps pour ne jamais rien perdre et pour passer d'un appareil à l'autre.</p>
+    <div class="btnrow">
+      <button class="btn ghost sm" onclick="exportData()">⬇︎ Exporter</button>
+      <button class="btn ghost sm" onclick="document.getElementById('imp').click()">⬆︎ Importer</button>
     </div>
-    <div style="padding:8px 16px 16px">
-      <div style="position:relative">
-        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px">🔍</span>
-        <input style="padding-left:44px;border-radius:24px;background:var(--lgray);border-color:transparent;font-size:15px"
-          placeholder="Rechercher un médicament..." id="home-search"
-          onclick="switchTab('search')" readonly>
+    <input type="file" id="imp" accept="application/json" style="display:none" onchange="importData(this)">
+  </div>
+</section>
+
+<!-- JOURNAL -->
+<section id="journal">
+  <div class="sechead">Journal <em>quotidien</em></div>
+  <div class="totrow"><span>Revenus cumulés</span><b style="color:var(--green)" id="jRev">0 €</b></div>
+  <div class="totrow"><span>Dépenses cumulées</span><b style="color:var(--red)" id="jDep">0 €</b></div>
+  <div class="totrow"><span>Solde</span><b id="jSolde">0 €</b></div>
+  <details class="add" id="jAdd">
+    <summary><div class="addbtn">＋ Nouvelle entrée du jour</div></summary>
+    <div class="form">
+      <label class="fld"><span>Date</span><input type="date" id="j_date"></label>
+      <label class="fld"><span>Objectif principal</span><input id="j_obj" placeholder="Mon objectif du jour"></label>
+      <div class="grid3">
+        <label class="fld"><span>Tâche 1</span><input id="j_t1"></label>
+        <label class="fld"><span>Tâche 2</span><input id="j_t2"></label>
+        <label class="fld"><span>Tâche 3</span><input id="j_t3"></label>
       </div>
-    </div>
-    <div id="guard-section"></div>
-    <div class="section-label">Médicaments populaires</div>
-    <div id="popular-list"><div class="loader"><div class="spinner"></div></div></div>
-    <div class="section-label">Pharmacies proches</div>
-    <div id="nearby-list"><div class="loader"><div class="spinner"></div></div></div>
-  </div>
-  <nav class="bnav">
-    <button class="bnav-item active" onclick="switchTab('home')"><span class="icon">🏠</span>Accueil</button>
-    <button class="bnav-item" onclick="switchTab('search')"><span class="icon">🔍</span>Recherche</button>
-    <button class="bnav-item" onclick="switchTab('reservations')"><span class="icon">📋</span>Réservations</button>
-    <button class="bnav-item" onclick="switchTab('profile')"><span class="icon">👤</span>Profil</button>
-  </nav>
-</div>
-
-<!-- ══════════ PATIENT — SEARCH ══════════ -->
-<div class="screen hidden" id="screen-search">
-  <div class="topbar">
-    <div class="input-wrap" style="margin:0;flex:1">
-      <span class="icon">🔍</span>
-      <input id="search-input" placeholder="Médicament, DCI, catégorie..." oninput="doSearch(this.value)"
-        style="border-radius:24px;background:var(--lgray);border-color:transparent">
-    </div>
-    <button class="topbar-btn" style="margin-left:8px;flex-shrink:0" onclick="switchTab('home')">✕</button>
-  </div>
-  <div class="tabs" id="search-cats"></div>
-  <div class="scroll" id="search-results">
-    <div class="empty"><div class="emoji">💊</div><p>Tapez le nom d'un médicament</p></div>
-  </div>
-</div>
-
-<!-- ══════════ PATIENT — MED DETAIL ══════════ -->
-<div class="screen hidden" id="screen-med">
-  <div class="topbar">
-    <button class="topbar-btn" onclick="goBack()">‹</button>
-    <div class="topbar-title" id="med-title">Médicament</div>
-    <div style="width:36px"></div>
-  </div>
-  <div class="scroll">
-    <div class="card" style="margin-top:16px">
-      <div class="card-body">
-        <div style="font-size:24px;font-weight:800;color:var(--black)" id="med-name"></div>
-        <div style="font-size:14px;color:var(--gray);margin-top:4px" id="med-dci"></div>
-        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap" id="med-tags"></div>
-        <div style="font-size:14px;color:var(--gray);margin-top:12px;line-height:1.5" id="med-desc"></div>
+      <div class="grid3">
+        <label class="fld"><span>Deep Work (h)</span><input id="j_dw" inputmode="decimal" placeholder="0"></label>
+        <label class="fld"><span>Énergie /10</span><input id="j_en" inputmode="numeric" placeholder="0"></label>
+        <label class="fld"><span>Sommeil (h)</span><input id="j_so" inputmode="decimal" placeholder="0"></label>
       </div>
-    </div>
-    <div class="section-label">Disponible dans ces pharmacies</div>
-    <div id="med-pharmacies"></div>
-  </div>
-</div>
-
-<!-- ══════════ PATIENT — PHARMACY DETAIL ══════════ -->
-<div class="screen hidden" id="screen-pharmacy">
-  <div class="topbar">
-    <button class="topbar-btn" onclick="goBack()">‹</button>
-    <div class="topbar-title" id="ph-title">Pharmacie</div>
-    <div style="width:36px"></div>
-  </div>
-  <div class="scroll">
-    <div class="card" style="margin-top:16px">
-      <div class="card-body">
-        <div style="font-size:20px;font-weight:800" id="ph-name"></div>
-        <div style="font-size:14px;color:var(--gray);margin-top:4px" id="ph-addr"></div>
-        <div style="display:flex;gap:16px;margin-top:14px;flex-wrap:wrap">
-          <div style="font-size:13px;color:var(--gray)" id="ph-hours"></div>
-          <div style="font-size:13px;color:var(--gray)" id="ph-phone"></div>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:14px;align-items:center" id="ph-rating-row"></div>
+      <div class="grid3">
+        <label class="fld"><span>Sport</span><select id="j_sp"><option value="">—</option><option>✓</option><option>✗</option></select></label>
+        <label class="fld"><span>Revenus €</span><input id="j_rv" inputmode="decimal" placeholder="0"></label>
+        <label class="fld"><span>Dépenses €</span><input id="j_dp" inputmode="decimal" placeholder="0"></label>
       </div>
+      <label class="fld"><span>Ce que j'ai appris</span><textarea id="j_ap"></textarea></label>
+      <label class="fld"><span>Business / carrière</span><input id="j_bz"></label>
+      <label class="fld"><span>Distractions / erreurs</span><input id="j_di"></label>
+      <label class="fld"><span>Gratitude / fierté</span><input id="j_gr"></label>
+      <label class="fld"><span>Demain absolument</span><textarea id="j_dm"></textarea></label>
+      <button class="btn" onclick="addJournal()">Enregistrer l'entrée</button>
     </div>
-    <div class="section-label">Médicaments disponibles</div>
-    <div id="ph-stock-list"></div>
-  </div>
-</div>
+  </details>
+  <div id="jList"></div>
+</section>
 
-<!-- ══════════ PATIENT — RESERVE ══════════ -->
-<div class="screen hidden" id="screen-reserve">
-  <div class="topbar">
-    <button class="topbar-btn" onclick="goBack()">‹</button>
-    <div class="topbar-title">Réserver</div>
-    <div style="width:36px"></div>
+<!-- HABITUDES -->
+<section id="habitudes">
+  <div class="sechead">Habitudes <em>de la semaine</em></div>
+  <div class="weeknav">
+    <button onclick="shiftWeek(-1)">‹</button>
+    <div class="wk"><b id="wkLabel"></b><span id="wkDates"></span></div>
+    <button onclick="shiftWeek(1)">›</button>
   </div>
-  <div class="scroll">
-    <div class="card" style="margin-top:16px">
-      <div class="card-body">
-        <div style="font-size:12px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.5px">Médicament</div>
-        <div style="font-size:18px;font-weight:800;margin-top:4px" id="res-med-name"></div>
-        <div style="font-size:13px;color:var(--gray);margin-top:2px" id="res-med-info"></div>
-        <div style="height:1px;background:var(--lgray);margin:12px 0"></div>
-        <div style="font-size:12px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.5px">Pharmacie</div>
-        <div style="font-size:15px;font-weight:700;margin-top:4px" id="res-ph-name"></div>
-        <div style="font-size:13px;color:var(--gray);margin-top:2px" id="res-ph-addr"></div>
-        <div style="height:1px;background:var(--lgray);margin:12px 0"></div>
-        <div style="font-size:12px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.5px">Prix unitaire</div>
-        <div style="font-size:18px;font-weight:800;color:var(--green);margin-top:4px" id="res-price"></div>
+  <div class="panel" style="padding:14px 12px">
+    <table class="htable"><thead><tr>
+      <th class="hn" style="text-align:left">Habitude</th>
+      <th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th><th>/7</th>
+    </tr></thead><tbody id="hBody"></tbody></table>
+  </div>
+  <div class="totrow"><span>Total habitudes complètes</span><b class="hsc" id="hTotal">0 / 0</b></div>
+  <div class="totrow"><span>% réussite de la semaine</span><b class="hsc" id="hPct">0 %</b></div>
+  <p class="hint" style="margin-top:12px">Touche une case pour faire défiler : vide → ✓ → ✗. Le score se calcule tout seul.</p>
+</section>
+
+<!-- OBJECTIFS -->
+<section id="objectifs">
+  <div class="sechead">Objectifs <em>mensuels</em></div>
+  <div id="oList"></div>
+</section>
+
+<!-- REVUE -->
+<section id="revue">
+  <div class="sechead">Revue <em>hebdomadaire</em></div>
+  <p class="hint">Touche une semaine pour la remplir. Vendredi soir = bilan, dimanche = préparer la suivante.</p>
+  <div id="rList"></div>
+</section>
+
+<!-- RESEAU -->
+<section id="reseau">
+  <div class="sechead">Réseau <em>& contacts</em></div>
+  <p class="hint">Forum PRICE 2026 · confidentiel Medoq</p>
+  <div class="toolrow" id="rsFilter"></div>
+  <details class="add" id="rsAdd">
+    <summary><div class="addbtn">＋ Ajouter un contact</div></summary>
+    <div class="form">
+      <label class="fld"><span>Nom</span><input id="rs_nom"></label>
+      <label class="fld"><span>Métier / Domaine</span><input id="rs_met"></label>
+      <label class="fld"><span>Opportunité</span><textarea id="rs_opp"></textarea></label>
+      <label class="fld"><span>Prochaine action</span><input id="rs_act"></label>
+      <div class="grid2">
+        <label class="fld"><span>Priorité</span><select id="rs_pri"><option>Clé</option><option>Important</option><option>Secondaire</option></select></label>
+        <label class="fld"><span>Statut</span><select id="rs_sta"><option>Actif</option><option>À relancer</option><option>En attente</option><option>Inactif</option></select></label>
       </div>
+      <button class="btn" onclick="addReseau()">Ajouter</button>
     </div>
-    <div class="card">
-      <div class="card-body">
-        <label style="font-size:14px;font-weight:600;display:block;margin-bottom:8px">Quantité</label>
-        <div style="display:flex;align-items:center;gap:16px">
-          <button onclick="changeQty(-1)" style="width:40px;height:40px;border-radius:50%;border:1.5px solid var(--mgray);background:var(--white);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
-          <span style="font-size:24px;font-weight:800;min-width:32px;text-align:center" id="res-qty">1</span>
-          <button onclick="changeQty(1)" style="width:40px;height:40px;border-radius:50%;border:1.5px solid var(--mgray);background:var(--white);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
-          <span style="font-size:13px;color:var(--gray)" id="res-total-label"></span>
-        </div>
+  </details>
+  <div id="rsList"></div>
+</section>
+
+<!-- IDEES -->
+<section id="idees">
+  <div class="sechead">Idées <em>business</em></div>
+  <details class="add" id="idAdd">
+    <summary><div class="addbtn">＋ Nouvelle idée</div></summary>
+    <div class="form">
+      <label class="fld"><span>Idée</span><input id="id_idee"></label>
+      <label class="fld"><span>Problème résolu</span><textarea id="id_pb"></textarea></label>
+      <label class="fld"><span>Solution</span><textarea id="id_sol"></textarea></label>
+      <label class="fld"><span>Pourquoi c'est intéressant</span><textarea id="id_pq"></textarea></label>
+      <label class="fld"><span>Première action concrète</span><input id="id_ac"></label>
+      <div class="grid2">
+        <label class="fld"><span>Priorité</span><select id="id_pri"><option>Haute</option><option>Moyenne</option><option>Basse</option></select></label>
+        <label class="fld"><span>Statut</span><select id="id_sta"><option>Idée</option><option>En exploration</option><option>En cours</option><option>Lancé</option><option>Abandonné</option></select></label>
       </div>
+      <button class="btn" onclick="addIdee()">Ajouter l'idée</button>
     </div>
-    <div class="card">
-      <div class="card-body">
-        <label style="font-size:14px;font-weight:600;display:block;margin-bottom:8px">Mode de paiement</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap" id="payment-methods">
-          <button class="tab active" onclick="selectPayment(this,'WAVE')">💙 Wave</button>
-          <button class="tab" onclick="selectPayment(this,'ORANGE_MONEY')">🟠 Orange Money</button>
-          <button class="tab" onclick="selectPayment(this,'CASH')">💵 Cash</button>
-        </div>
-        <div style="margin-top:12px;padding:10px 12px;background:var(--ltgreen);border-radius:var(--radius-sm);font-size:13px;color:var(--dkgreen)">
-          ⏱ Votre médicament sera réservé pendant <strong>2 heures</strong>
-        </div>
-      </div>
+  </details>
+  <div id="idList"></div>
+</section>
+
+<!-- ERREURS -->
+<section id="erreurs">
+  <div class="sechead">Erreurs <em>& leçons</em></div>
+  <details class="add" id="erAdd">
+    <summary><div class="addbtn">＋ Noter une erreur / leçon</div></summary>
+    <div class="form">
+      <label class="fld"><span>Date</span><input type="date" id="er_date"></label>
+      <label class="fld"><span>Erreur</span><textarea id="er_err"></textarea></label>
+      <label class="fld"><span>Pourquoi c'est arrivé</span><textarea id="er_pq"></textarea></label>
+      <label class="fld"><span>Comment éviter</span><textarea id="er_ev"></textarea></label>
+      <label class="fld"><span>Leçon retenue</span><textarea id="er_le"></textarea></label>
+      <label class="fld"><span>Catégorie</span><select id="er_cat"><option>Business</option><option>Personnel</option><option>Financier</option><option>Relationnel</option><option>Organisation</option><option>Autre</option></select></label>
+      <button class="btn" onclick="addErreur()">Enregistrer</button>
     </div>
-    <div class="card">
-      <div class="card-body">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:15px;font-weight:600">Total à payer</span>
-          <span style="font-size:22px;font-weight:800;color:var(--green)" id="res-total">—</span>
-        </div>
-      </div>
-    </div>
-    <div class="btn-wrap"><button class="btn btn-primary" onclick="confirmReservation()" id="res-btn">Confirmer la réservation</button></div>
-    <div style="height:16px"></div>
+  </details>
+  <div id="erList"></div>
+</section>
+
+<!-- VISION -->
+<section id="vision">
+  <div class="sechead">Vision <em>& règles</em></div>
+  <div class="panel gold">
+    <div class="plabel">Qui je deviens</div>
+    <ul class="vlist" id="vQui"></ul>
   </div>
+  <div class="panel">
+    <div class="plabel">Mes règles</div>
+    <ul class="vlist num" id="vReg"></ul>
+  </div>
+</section>
+
+<!-- RAPPELS -->
+<section id="rappels">
+  <div class="sechead">Rappels <em>& routines</em></div>
+  <div class="panel">
+    <div class="plabel">Routine matinale</div>
+    <div id="rapMat"></div>
+  </div>
+  <div class="panel">
+    <div class="plabel">Routine du soir</div>
+    <div id="rapSoir"></div>
+  </div>
+  <div class="panel">
+    <div class="plabel">Hebdomadaires & mensuels</div>
+    <div id="rapHebdo"></div>
+  </div>
+</section>
+
 </div>
 
-<!-- ══════════ PATIENT — SUCCESS ══════════ -->
-<div class="screen hidden" id="screen-success">
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;flex:1;text-align:center">
-    <div style="font-size:80px;margin-bottom:20px;display:inline-block;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)">✅</div>
-    <div style="font-size:22px;font-weight:800;margin-bottom:8px">Réservation confirmée !</div>
-    <div style="font-size:15px;color:var(--gray);margin-bottom:28px;line-height:1.5">Votre médicament vous attend à la pharmacie.</div>
-    <div class="card" style="width:100%;margin:0 0 16px">
-      <div class="card-body">
-        <div id="success-ref" style="font-size:20px;font-weight:900;color:var(--green);text-align:center;letter-spacing:1px;margin-bottom:14px"></div>
-        <div id="success-details" style="font-size:14px;color:var(--gray);line-height:2"></div>
-      </div>
-    </div>
-    <div style="padding:0 0 12px;width:100%"><button class="btn btn-primary" onclick="switchTab('reservations')">Voir mes réservations</button></div>
-    <div style="width:100%"><button class="btn btn-outline" onclick="switchTab('home')">Retour à l'accueil</button></div>
-  </div>
-</div>
+<nav class="tabs"><div class="tabscroll" id="tabscroll"></div></nav>
 
-<!-- ══════════ PATIENT — RESERVATIONS ══════════ -->
-<div class="screen hidden" id="screen-reservations">
-  <div class="topbar">
-    <div class="topbar-logo">Med<span>oq</span></div>
-    <button class="topbar-btn" onclick="loadMyResas(resaFilter)" style="font-size:14px;font-weight:700;background:var(--ltgreen);color:var(--green)">↺</button>
-  </div>
-  <div class="tabs">
-    <button class="tab active" onclick="filterResas(this,'')">Toutes</button>
-    <button class="tab" onclick="filterResas(this,'CONFIRMED')">Confirmées</button>
-    <button class="tab" onclick="filterResas(this,'READY')">Prêtes</button>
-    <button class="tab" onclick="filterResas(this,'COMPLETED')">Terminées</button>
-    <button class="tab" onclick="filterResas(this,'CANCELLED')">Annulées</button>
-  </div>
-  <div class="scroll" id="resa-list"><div class="loader"><div class="spinner"></div></div></div>
-  <nav class="bnav">
-    <button class="bnav-item" onclick="switchTab('home')"><span class="icon">🏠</span>Accueil</button>
-    <button class="bnav-item" onclick="switchTab('search')"><span class="icon">🔍</span>Recherche</button>
-    <button class="bnav-item active" onclick="switchTab('reservations')"><span class="icon">📋</span>Réservations</button>
-    <button class="bnav-item" onclick="switchTab('profile')"><span class="icon">👤</span>Profil</button>
-  </nav>
-</div>
-
-<!-- ══════════ PATIENT — NOTIFICATIONS ══════════ -->
-<div class="screen hidden" id="screen-notifs">
-  <div class="topbar">
-    <button class="topbar-btn" onclick="goBack()">‹</button>
-    <div class="topbar-title">Notifications</div>
-    <div style="width:36px"></div>
-  </div>
-  <div class="scroll" id="notifs-list"></div>
-</div>
-
-<!-- ══════════ PATIENT — PROFILE ══════════ -->
-<div class="screen hidden" id="screen-profile">
-  <div class="topbar"><div class="topbar-logo">Med<span>oq</span></div></div>
-  <div class="scroll">
-    <div style="padding:24px 16px 16px;display:flex;align-items:center;gap:16px">
-      <div class="avatar" style="width:64px;height:64px;font-size:24px" id="profile-avatar">A</div>
-      <div>
-        <div style="font-size:18px;font-weight:800" id="profile-name">—</div>
-        <div style="font-size:14px;color:var(--gray)" id="profile-phone">—</div>
-        <span class="badge badge-green">Patient</span>
-      </div>
-    </div>
-    <div class="divider"></div>
-    <div class="section-label">Mon compte</div>
-    <div class="card">
-      <div class="card-row" onclick="toast('Bientôt disponible')"><span style="margin-right:12px">✏️</span> Modifier mon profil <span style="margin-left:auto;color:var(--gray)">›</span></div>
-      <div class="card-row" onclick="openNotifs()"><span style="margin-right:12px">🔔</span> Notifications <span style="margin-left:auto;color:var(--gray)">›</span></div>
-      <div class="card-row" onclick="toast('Bientôt disponible')"><span style="margin-right:12px">🔒</span> Sécurité <span style="margin-left:auto;color:var(--gray)">›</span></div>
-    </div>
-    <div class="section-label">Support</div>
-    <div class="card">
-      <div class="card-row" onclick="toast('Bientôt disponible')"><span style="margin-right:12px">❓</span> Aide <span style="margin-left:auto;color:var(--gray)">›</span></div>
-      <div class="card-row" onclick="toast('Bientôt disponible')"><span style="margin-right:12px">📞</span> Nous contacter <span style="margin-left:auto;color:var(--gray)">›</span></div>
-    </div>
-    <div class="btn-wrap" style="padding-top:8px"><button class="btn btn-outline" onclick="doLogout()">Se déconnecter</button></div>
-  </div>
-  <nav class="bnav">
-    <button class="bnav-item" onclick="switchTab('home')"><span class="icon">🏠</span>Accueil</button>
-    <button class="bnav-item" onclick="switchTab('search')"><span class="icon">🔍</span>Recherche</button>
-    <button class="bnav-item" onclick="switchTab('reservations')"><span class="icon">📋</span>Réservations</button>
-    <button class="bnav-item active" onclick="switchTab('profile')"><span class="icon">👤</span>Profil</button>
-  </nav>
-</div>
-
-<!-- ══════════ PHARMACIEN — DASHBOARD ══════════ -->
-<div class="screen hidden" id="screen-pdash">
-  <div class="topbar">
-    <div class="topbar-logo">Med<span>oq</span></div>
-    <button class="topbar-btn" onclick="doLogout()" title="Déconnexion">⎋</button>
-  </div>
-  <div class="scroll" id="pdash-scroll">
-    <div style="padding:16px 16px 4px">
-      <div style="font-size:14px;color:var(--gray)">Tableau de bord</div>
-      <div style="font-size:20px;font-weight:800" id="pdash-phname">—</div>
-    </div>
-    <div class="stat-grid">
-      <div class="stat-box"><div class="stat-val" id="stat-today">—</div><div class="stat-lbl">Aujourd'hui</div></div>
-      <div class="stat-box"><div class="stat-val" id="stat-pending">—</div><div class="stat-lbl">En attente</div></div>
-      <div class="stat-box"><div class="stat-val" id="stat-completed">—</div><div class="stat-lbl">Terminées</div></div>
-      <div class="stat-box"><div class="stat-val" id="stat-low" style="color:var(--orange)">—</div><div class="stat-lbl">Stock bas ⚠️</div></div>
-    </div>
-    <div class="section-label">Dernières réservations</div>
-    <div id="pdash-resas"></div>
-  </div>
-  <nav class="bnav">
-    <button class="bnav-item active" onclick="pSwitchTab('pdash')"><span class="icon">📊</span>Dashboard</button>
-    <button class="bnav-item" onclick="pSwitchTab('presas')"><span class="icon">📋</span>Réservations</button>
-    <button class="bnav-item" onclick="pSwitchTab('pstock')"><span class="icon">📦</span>Stock</button>
-    <button class="bnav-item" onclick="pSwitchTab('pprofil')"><span class="icon">👤</span>Profil</button>
-  </nav>
-</div>
-
-<!-- ══════════ PHARMACIEN — RESERVATIONS ══════════ -->
-<div class="screen hidden" id="screen-presas">
-  <div class="topbar">
-    <div class="topbar-title">Réservations</div>
-    <button class="topbar-btn" onclick="loadPhResas(phResaFilter)" style="font-size:14px;font-weight:700;background:var(--ltgreen);color:var(--green)">↺</button>
-  </div>
-  <div class="tabs">
-    <button class="tab active" onclick="filterPhResas(this,'')">Toutes</button>
-    <button class="tab" onclick="filterPhResas(this,'CONFIRMED')">Nouvelles</button>
-    <button class="tab" onclick="filterPhResas(this,'READY')">Prêtes</button>
-    <button class="tab" onclick="filterPhResas(this,'COMPLETED')">Terminées</button>
-  </div>
-  <div class="scroll" id="presas-list"><div class="loader"><div class="spinner"></div></div></div>
-  <nav class="bnav">
-    <button class="bnav-item" onclick="pSwitchTab('pdash')"><span class="icon">📊</span>Dashboard</button>
-    <button class="bnav-item active" onclick="pSwitchTab('presas')"><span class="icon">📋</span>Réservations</button>
-    <button class="bnav-item" onclick="pSwitchTab('pstock')"><span class="icon">📦</span>Stock</button>
-    <button class="bnav-item" onclick="pSwitchTab('pprofil')"><span class="icon">👤</span>Profil</button>
-  </nav>
-</div>
-
-<!-- ══════════ PHARMACIEN — STOCK ══════════ -->
-<div class="screen hidden" id="screen-pstock">
-  <div class="topbar">
-    <div class="topbar-title">Gestion du stock</div>
-    <button class="topbar-btn" onclick="openAddStockModal()" style="background:var(--green);color:#fff;font-size:22px">+</button>
-  </div>
-  <div style="padding:12px 16px">
-    <div class="input-wrap" style="margin:0">
-      <span class="icon">🔍</span>
-      <input placeholder="Rechercher un médicament..." id="stock-search" oninput="filterStock(this.value)">
-    </div>
-  </div>
-  <div class="scroll" id="stock-list"><div class="loader"><div class="spinner"></div></div></div>
-  <nav class="bnav">
-    <button class="bnav-item" onclick="pSwitchTab('pdash')"><span class="icon">📊</span>Dashboard</button>
-    <button class="bnav-item" onclick="pSwitchTab('presas')"><span class="icon">📋</span>Réservations</button>
-    <button class="bnav-item active" onclick="pSwitchTab('pstock')"><span class="icon">📦</span>Stock</button>
-    <button class="bnav-item" onclick="pSwitchTab('pprofil')"><span class="icon">👤</span>Profil</button>
-  </nav>
-</div>
-
-<!-- ══════════ PHARMACIEN — PROFIL ══════════ -->
-<div class="screen hidden" id="screen-pprofil">
-  <div class="topbar"><div class="topbar-title">Mon Profil</div></div>
-  <div class="scroll">
-    <div style="padding:24px 16px 16px;display:flex;align-items:center;gap:16px">
-      <div class="avatar" style="width:64px;height:64px;font-size:28px">🏥</div>
-      <div>
-        <div style="font-size:18px;font-weight:800" id="pprofil-name">—</div>
-        <div style="font-size:14px;color:var(--gray)" id="pprofil-phname">—</div>
-        <span class="badge badge-green">Pharmacien</span>
-      </div>
-    </div>
-    <div class="divider"></div>
-    <div class="card" style="margin-top:12px">
-      <div class="card-row" onclick="toast('Bientôt disponible')"><span style="margin-right:12px">✏️</span> Modifier le profil <span style="margin-left:auto;color:var(--gray)">›</span></div>
-      <div class="card-row" onclick="toast('Bientôt disponible')"><span style="margin-right:12px">🕐</span> Horaires d'ouverture <span style="margin-left:auto;color:var(--gray)">›</span></div>
-      <div class="card-row" onclick="toast('Bientôt disponible')"><span style="margin-right:12px">📊</span> Statistiques avancées <span style="margin-left:auto;color:var(--gray)">›</span></div>
-    </div>
-    <div class="btn-wrap" style="padding-top:8px"><button class="btn btn-outline" onclick="doLogout()">Se déconnecter</button></div>
-  </div>
-  <nav class="bnav">
-    <button class="bnav-item" onclick="pSwitchTab('pdash')"><span class="icon">📊</span>Dashboard</button>
-    <button class="bnav-item" onclick="pSwitchTab('presas')"><span class="icon">📋</span>Réservations</button>
-    <button class="bnav-item" onclick="pSwitchTab('pstock')"><span class="icon">📦</span>Stock</button>
-    <button class="bnav-item active" onclick="pSwitchTab('pprofil')"><span class="icon">👤</span>Profil</button>
-  </nav>
-</div>
-
-<!-- ══════════ MODAL — MODIFIER STOCK ══════════ -->
-<div id="modal-stock" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:flex-end;justify-content:center">
-  <div style="background:var(--white);border-radius:var(--radius) var(--radius) 0 0;padding:24px;width:100%;max-width:480px">
-    <div style="font-size:18px;font-weight:800;margin-bottom:4px" id="modal-med-name">—</div>
-    <div style="font-size:13px;color:var(--gray);margin-bottom:20px" id="modal-med-info">—</div>
-    <label style="font-size:14px;font-weight:600;display:block;margin-bottom:6px">Quantité en stock</label>
-    <input class="no-icon" type="number" id="modal-qty" placeholder="0" min="0" style="margin-bottom:16px">
-    <label style="font-size:14px;font-weight:600;display:block;margin-bottom:6px">Prix unitaire (FCFA)</label>
-    <input class="no-icon" type="number" id="modal-price" placeholder="0" min="0" style="margin-bottom:16px">
-    <label style="font-size:14px;font-weight:600;display:block;margin-bottom:6px">Seuil d'alerte stock bas</label>
-    <input class="no-icon" type="number" id="modal-threshold" placeholder="5" min="0" style="margin-bottom:24px">
-    <div style="display:flex;gap:12px">
-      <button class="btn btn-outline" onclick="closeStockModal()">Annuler</button>
-      <button class="btn btn-primary" onclick="saveStock()">Enregistrer</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════ MODAL — AJOUTER MÉDICAMENT ══════════ -->
-<div id="modal-add-stock" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:flex-end;justify-content:center">
-  <div style="background:var(--white);border-radius:var(--radius) var(--radius) 0 0;padding:24px;width:100%;max-width:480px">
-    <div style="font-size:18px;font-weight:800;margin-bottom:16px">Ajouter un médicament</div>
-    <label style="font-size:14px;font-weight:600;display:block;margin-bottom:6px">Médicament</label>
-    <select class="no-icon" id="add-stock-med" style="margin-bottom:16px;padding:14px"></select>
-    <label style="font-size:14px;font-weight:600;display:block;margin-bottom:6px">Quantité initiale</label>
-    <input class="no-icon" type="number" id="add-stock-qty" placeholder="0" min="0" style="margin-bottom:16px">
-    <label style="font-size:14px;font-weight:600;display:block;margin-bottom:6px">Prix unitaire (FCFA)</label>
-    <input class="no-icon" type="number" id="add-stock-price" placeholder="0" min="0" style="margin-bottom:24px">
-    <div style="display:flex;gap:12px">
-      <button class="btn btn-outline" onclick="closeAddStockModal()">Annuler</button>
-      <button class="btn btn-primary" onclick="addNewStock()">Ajouter</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast"></div>
-<div id="demo-badge">🧪 Mode démo</div>
+<div class="foot">Système de pilotage personnel · données stockées sur cet appareil</div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════════
-// CONFIG
-// ═══════════════════════════════════════════════════════════════════════════
-const API_BASE = window.location.hostname === 'localhost'
-  ? 'http://localhost:8080/api/v1'
-  : 'https://medoq-api.onrender.com/api/v1';
+"use strict";
+const KEY="pilotage_amadou_v1";
 
-// ═══════════════════════════════════════════════════════════════════════════
-// MOCK DATA
-// ═══════════════════════════════════════════════════════════════════════════
-const MOCK_USERS = [
-  { id: 'u1', phone: '+221770000001', name: 'Amadou Diallo', role: 'PATIENT', password: 'password123' },
-  { id: 'u2', phone: '+221770000002', name: 'Fatou Sow', role: 'PHARMACY_STAFF', password: 'password123', pharmacyId: 'ph1' },
-  { id: 'u3', phone: '+221776543210', name: 'Moussa Ndiaye', role: 'PATIENT', password: 'password123' },
-];
-
-const MOCK_MEDS = [
-  { id: 'm1', name: 'Paracétamol 500mg', dci: 'Paracétamol', form: 'Comprimé', dosage: '500mg', category: 'Antidouleur', requiresPrescription: false, description: 'Antalgique et antipyrétique. Soulage les douleurs légères à modérées et réduit la fièvre. Adultes et enfants de plus de 12 ans.' },
-  { id: 'm2', name: 'Amoxicilline 500mg', dci: 'Amoxicilline', form: 'Gélule', dosage: '500mg', category: 'Antibiotique', requiresPrescription: true, description: 'Antibiotique de la famille des pénicillines. Traitement des infections bactériennes (ORL, pulmonaires, cutanées). Sur ordonnance.' },
-  { id: 'm3', name: 'Coartem 20/120mg', dci: 'Artémether + Luméfantrine', form: 'Comprimé', dosage: '20/120mg', category: 'Antipaludéen', requiresPrescription: false, description: 'Traitement de première intention du paludisme non compliqué à Plasmodium falciparum.' },
-  { id: 'm4', name: 'Oméprazole 20mg', dci: 'Oméprazole', form: 'Gélule', dosage: '20mg', category: 'Gastro', requiresPrescription: false, description: 'Inhibiteur de la pompe à protons. Traitement des ulcères gastroduodénaux, reflux gastro-œsophagien.' },
-  { id: 'm5', name: 'Métronidazole 500mg', dci: 'Métronidazole', form: 'Comprimé', dosage: '500mg', category: 'Antiparasitaire', requiresPrescription: true, description: 'Antibiotique et antiparasitaire. Infections à germes anaérobies, amibiases, giardoses.' },
-  { id: 'm6', name: 'Ibuprofène 400mg', dci: 'Ibuprofène', form: 'Comprimé', dosage: '400mg', category: 'Antidouleur', requiresPrescription: false, description: 'Anti-inflammatoire non stéroïdien. Douleurs, fièvre, états inflammatoires.' },
-  { id: 'm7', name: 'Vitamine C 1000mg', dci: 'Acide ascorbique', form: 'Comprimé effervescent', dosage: '1000mg', category: 'Vitamines', requiresPrescription: false, description: 'Vitamine C effervescente. Contribue à réduire la fatigue et soutient le système immunitaire.' },
-  { id: 'm8', name: 'Quinine 300mg', dci: 'Quinine sulfate', form: 'Comprimé', dosage: '300mg', category: 'Antipaludéen', requiresPrescription: true, description: 'Traitement du paludisme grave. À utiliser sous surveillance médicale stricte.' },
-  { id: 'm9', name: 'Fer + Acide folique', dci: 'Sulfate ferreux + Acide folique', form: 'Comprimé', dosage: '200mg/0.4mg', category: 'Maternité', requiresPrescription: false, description: 'Supplémentation en fer et acide folique. Prévention de l\'anémie, recommandé pendant la grossesse.' },
-  { id: 'm10', name: 'Cotrimoxazole 480mg', dci: 'Sulfaméthoxazole + Triméthoprime', form: 'Comprimé', dosage: '480mg', category: 'Antibiotique', requiresPrescription: true, description: 'Antibiotique large spectre. Infections urinaires, respiratoires et prophylaxie VIH.' },
-  { id: 'm11', name: 'Chlorure de Sodium 0.9%', dci: 'Chlorure de sodium', form: 'Solution injectable', dosage: '0.9%', category: 'Soluté', requiresPrescription: false, description: 'Sérum physiologique. Perfusion, irrigation, réhydratation.' },
-  { id: 'm12', name: 'Tramadol 100mg', dci: 'Chlorhydrate de tramadol', form: 'Gélule', dosage: '100mg', category: 'Antidouleur', requiresPrescription: true, description: 'Antalgique opioïde central. Douleurs modérées à sévères. Sur ordonnance stricte.' },
-];
-
-const MOCK_PHARMACIES = [
-  { id: 'ph1', name: 'Pharmacie Centrale de Dakar', address: 'Av. Léopold Sédar Senghor, Plateau, Dakar', phone: '+221338233001', openingHours: '08h – 22h · Lun-Sam', rating: 4.8, reviewCount: 124, distance: '0.4 km', isGuard: false },
-  { id: 'ph2', name: 'Pharmacie Mer et Soleil', address: 'Rue 10 × Rue 18, Médina, Dakar', phone: '+221338921234', openingHours: '08h – 21h · 7j/7', rating: 4.5, reviewCount: 87, distance: '0.9 km', isGuard: true },
-  { id: 'ph3', name: 'Pharmacie du Point E', address: 'Rue Aimé Césaire, Point E, Dakar', phone: '+221338657890', openingHours: '08h – 20h · Lun-Sam', rating: 4.6, reviewCount: 56, distance: '1.2 km', isGuard: false },
-  { id: 'ph4', name: 'Pharmacie Amitié 24h', address: 'Route de Ngor, Yoff, Dakar', phone: '+221338765432', openingHours: '24h/24 · 7j/7', rating: 4.3, reviewCount: 203, distance: '2.1 km', isGuard: true },
-];
-
-const MOCK_STOCK_DEFAULT = {
-  ph1: [
-    { medicationId:'m1', medicationName:'Paracétamol 500mg', form:'Comprimé', dosage:'500mg', quantity:150, price:500, threshold:20, isLow:false },
-    { medicationId:'m2', medicationName:'Amoxicilline 500mg', form:'Gélule', dosage:'500mg', quantity:45, price:3500, threshold:10, isLow:false },
-    { medicationId:'m3', medicationName:'Coartem 20/120mg', form:'Comprimé', dosage:'20/120mg', quantity:30, price:4500, threshold:10, isLow:false },
-    { medicationId:'m4', medicationName:'Oméprazole 20mg', form:'Gélule', dosage:'20mg', quantity:8, price:2000, threshold:10, isLow:true },
-    { medicationId:'m6', medicationName:'Ibuprofène 400mg', form:'Comprimé', dosage:'400mg', quantity:0, price:800, threshold:10, isLow:false },
-    { medicationId:'m7', medicationName:'Vitamine C 1000mg', form:'Comprimé effervescent', dosage:'1000mg', quantity:60, price:1500, threshold:15, isLow:false },
-    { medicationId:'m9', medicationName:'Fer + Acide folique', form:'Comprimé', dosage:'200mg/0.4mg', quantity:25, price:1800, threshold:10, isLow:false },
+/* ---------- SEED (tes données réelles) ---------- */
+const SEED={
+  ruleOfDay:"Priorité à la discipline avant la motivation.",
+  focus:{date:"",text:"Remettre de l'ordre dans ma vie"},
+  vision:["Homme discipliné","Excellent en business et communication","Solide mentalement et physiquement","Entrepreneur structuré","Financièrement libre","Capable de construire des projets utiles et durables"],
+  regles:["Toujours finir ce que je commence","Pas de distraction le matin","Pas de décision importante fatigué","Chaque semaine doit produire un résultat concret","Priorité à la discipline avant la motivation","Le téléphone ne contrôle pas ma vie","Apprendre quelque chose chaque jour","Mon corps et mon esprit sont des outils de performance","Être constant même quand je ne suis pas motivé","Penser long terme"],
+  habitNames:["Réveil propre","Sport","Lecture / apprentissage","Travail projet","Pas de distraction inutile","Hydratation","Sommeil correct"],
+  habits:{"2026-05-11":[
+    ["y","y","y","n","n","y",""],
+    ["y","y","y","y","n","y",""],
+    ["y","y","y","y","y","y",""],
+    ["y","y","y","y","y","n",""],
+    ["n","n","n","n","n","n",""],
+    ["y","y","y","y","y","y",""],
+    ["y","y","y","n","y","",""]
+  ]},
+  journal:[
+    {date:"2026-05-10",obj:"Mettre de l'ordre",t1:"Call",t2:"Propulse",t3:"Reunion",dw:"0",ap:"Valorisation",bz:"Valorisation",en:"5",sp:"✗",so:"7",rv:"0",dp:"0",di:"Scroll",gr:"Rester focus",dm:"Rester focus sans distraction"},
+    {date:"2026-05-11",obj:"Avancer sur mon business et ma discipline",t1:"Valo",t2:"MVP",t3:"Sport",dw:"0",ap:"Psychologie habitude",bz:"MVP et valo",en:"8",sp:"✓",so:"7",rv:"0",dp:"17",di:"Scroll P",gr:"Avancer sur mes projets et mes habitudes",dm:"Éviter les distractions"},
+    {date:"2026-05-12",obj:"Avancer sur Medoq et rester focus",t1:"Préparation",t2:"Landing page",t3:"Call",dw:"0",ap:"Google Analytics",bz:"Call",en:"8",sp:"✗",so:"7",rv:"0",dp:"25",di:"Scroll P",gr:"Bonne santé",dm:""},
+    {date:"2026-05-13",obj:"Me situer par rapport à Medoq et rester focus",t1:"Call",t2:"Lecture",t3:"",dw:"0",ap:"Mise en place des habitudes par superposition",bz:"Call",en:"9",sp:"✓",so:"7",rv:"0",dp:"",di:"Scroll P",gr:"Lecture",dm:""},
+    {date:"2026-05-14",obj:"Rester focus sur les projets et FoutaLink",t1:"Point Medoq",t2:"Dossier Fouta Link",t3:"Planification",dw:"1",ap:"Ne pas abandonner quand on n'est pas satisfait",bz:"FoutaLink",en:"8",sp:"✓",so:"6",rv:"0",dp:"",di:"Scroll P",gr:"Ne pas avoir pris une mauvaise décision",dm:""},
+    {date:"2026-05-15",obj:"Faire mes relances et faire le point sur Medoq",t1:"Messages relance",t2:"Accompagnement",t3:"",dw:"0",ap:"",bz:"Relance partenaire",en:"6",sp:"✗",so:"9",rv:"0",dp:"",di:"Scroll",gr:"Accompagner une personne et révéler mon potentiel",dm:"Rester focus sans distraction"},
+    {date:"2026-05-16",obj:"Remettre de l'ordre dans ma vie",t1:"Sport et courses",t2:"Cuisine et ménage",t3:"Planification",dw:"0",ap:"L'effet de la distraction sur le travail",bz:"",en:"10",sp:"✓",so:"",rv:"",dp:"",di:"Scroll P",gr:"Être en forme et en bonne santé",dm:"Repos, planifier la semaine et rester concentré"}
   ],
-  ph2: [
-    { medicationId:'m1', medicationName:'Paracétamol 500mg', form:'Comprimé', dosage:'500mg', quantity:200, price:450, threshold:20, isLow:false },
-    { medicationId:'m3', medicationName:'Coartem 20/120mg', form:'Comprimé', dosage:'20/120mg', quantity:3, price:4800, threshold:10, isLow:true },
-    { medicationId:'m5', medicationName:'Métronidazole 500mg', form:'Comprimé', dosage:'500mg', quantity:55, price:1200, threshold:10, isLow:false },
-    { medicationId:'m8', medicationName:'Quinine 300mg', form:'Comprimé', dosage:'300mg', quantity:20, price:2500, threshold:5, isLow:false },
-    { medicationId:'m9', medicationName:'Fer + Acide folique', form:'Comprimé', dosage:'200mg/0.4mg', quantity:40, price:1800, threshold:10, isLow:false },
-  ],
-  ph3: [
-    { medicationId:'m2', medicationName:'Amoxicilline 500mg', form:'Gélule', dosage:'500mg', quantity:0, price:3200, threshold:10, isLow:false },
-    { medicationId:'m4', medicationName:'Oméprazole 20mg', form:'Gélule', dosage:'20mg', quantity:25, price:1900, threshold:10, isLow:false },
-    { medicationId:'m6', medicationName:'Ibuprofène 400mg', form:'Comprimé', dosage:'400mg', quantity:90, price:750, threshold:10, isLow:false },
-    { medicationId:'m10', medicationName:'Cotrimoxazole 480mg', form:'Comprimé', dosage:'480mg', quantity:15, price:900, threshold:5, isLow:false },
-    { medicationId:'m7', medicationName:'Vitamine C 1000mg', form:'Comprimé effervescent', dosage:'1000mg', quantity:12, price:1600, threshold:10, isLow:false },
-  ],
-  ph4: [
-    { medicationId:'m1', medicationName:'Paracétamol 500mg', form:'Comprimé', dosage:'500mg', quantity:300, price:500, threshold:20, isLow:false },
-    { medicationId:'m3', medicationName:'Coartem 20/120mg', form:'Comprimé', dosage:'20/120mg', quantity:50, price:4500, threshold:10, isLow:false },
-    { medicationId:'m7', medicationName:'Vitamine C 1000mg', form:'Comprimé effervescent', dosage:'1000mg', quantity:4, price:1600, threshold:10, isLow:true },
-    { medicationId:'m9', medicationName:'Fer + Acide folique', form:'Comprimé', dosage:'200mg/0.4mg', quantity:65, price:1700, threshold:10, isLow:false },
-    { medicationId:'m11', medicationName:'Chlorure de Sodium 0.9%', form:'Solution injectable', dosage:'0.9%', quantity:80, price:600, threshold:20, isLow:false },
-  ],
+  objectifs:["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"].map(m=>({mois:m+" 2026",o1:"",o2:"",o3:"",sec:"",eviter:"",statut:"En cours"})),
+  revue:(function(){
+    const labels=[];const start=new Date(2025,11,29);
+    for(let i=0;i<52;i++){const a=new Date(start);a.setDate(a.getDate()+i*7);const b=new Date(a);b.setDate(b.getDate()+6);
+      const f=d=>("0"+d.getDate()).slice(-2)+"/"+("0"+(d.getMonth()+1)).slice(-2);
+      labels.push({sem:"S"+("0"+(i+1)).slice(-2),periode:f(a)+" - "+f(b)+"/"+String(b.getFullYear()).slice(-2),avance:"",ralenti:"",arreter:"",priorite:"",note:""});}
+    return labels;})(),
+  reseau:[
+    {nom:"Papa Samba Yacine DIOP",met:"Dir. Retail & PME — BNDE Sénégal",opp:"Financement institutionnel BNDE pour lancement Medoq au Sénégal. Contact n°1.",act:"Appel BNDE dispositifs de prêt pour Medoq",pri:"Clé",sta:"À relancer"},
+    {nom:"Manon AMINATOU, PhD",met:"Présidente — Confluence Evolution (France)",opp:"Cabinet financement & concrétisation de projets. Structurer levée de fonds + subventions diaspora.",act:"RDV Confluence Evolution — plan financement Medoq",pri:"Clé",sta:"En attente"},
+    {nom:"Balla Sow FAYE",met:"Président SBPN (France)",opp:"Réseau décideurs sénégalais. A demandé à travailler avec Medoq. Portes ouvertes diaspora + Sénégal.",act:"Relancer — concrétiser collaboration SBPN x Medoq",pri:"Clé",sta:"Actif"},
+    {nom:"Serge SENGA",met:"Resp. Business Dev. — Orange France (Paris)",opp:"Infrastructure SMS, mobile & data Afrique de l'Ouest. Partenariat clé pour SMS rappels médicaments.",act:"Envoyer pitch + proposer partenariat technique SMS",pri:"Clé",sta:"Actif"},
+    {nom:"Abdoul Aziz WANE",met:"Fondateur & DG — One Mobility Services (Paris/Dakar)",opp:"Expert systèmes numériques & mobilité intelligente. Ancrage Paris-Dakar. Profil associé technique idéal.",act:"Appel — explorer rôle associé technique Medoq",pri:"Clé",sta:"Actif"},
+    {nom:"Honoré MENDY",met:"Fondateur & DG — INNOVANUM (Paris)",opp:"Expert transformation & modernisation institutionnelle. Conseil stratégique + relations institutions SN.",act:"RDV — structuration conseil stratégique Medoq",pri:"Important",sta:"Actif"},
+    {nom:"Sountou BOUSSO",met:"CEO — Lagardère Travel Retail West Africa (Dakar/HEC Paris)",opp:"Groupe international présent dans les aéroports Afrique de l'Ouest. Distribution & influence au Sénégal.",act:"Recontacter — implantation et distribution Medoq SN",pri:"Important",sta:"En attente"},
+    {nom:"Babacar SOW",met:"Associé-Gérant — Cogesto Consulting (Dakar/Casablanca)",opp:"Cabinet conseil finance & management. Structuration financière Medoq + portes Afrique francophone.",act:"RDV — structuration financière et stratégique",pri:"Important",sta:"Actif"},
+    {nom:"Codou SOW, CPA",met:"Partner — Cogesto Conseils Inc. (Montréal)",opp:"CPA certifiée. Structuration comptable et financière. Financement diaspora Canada pour Medoq.",act:"Recontacter — financement diaspora Canada",pri:"Important",sta:"À relancer"},
+    {nom:"Moussa AW",met:"Organisateur Forum PRICE — RISCE (France)",opp:"Réseau institutionnel fort. Accès Ambassade du Sénégal. Peut faciliter RDV Ambassadeur pour Medoq.",act:"Demander intro officielle Ambassadeur via RISCE",pri:"Important",sta:"Actif"},
+    {nom:"Abdou Chacour DIENE",met:"Président — RISCE (Paris)",opp:"Accès direct Ambassade du Sénégal en France. Soutien démarche institutionnelle Medoq.",act:"Solliciter intro Ambassade du Sénégal en France",pri:"Important",sta:"À relancer"},
+    {nom:"Mayoro MBAYE",met:"Président & Fondateur — CiT Citadelle Industrielle de Thiès",opp:"Ancrage industriel région de Thiès. Déploiement terrain Medoq hors Dakar.",act:"Explorer partenariat déploiement région Thiès",pri:"Secondaire",sta:"Actif"},
+    {nom:"David VUAILLAT",met:"Dir. Activité EPM Conso — SQORUS (France)",opp:"Expert transformation digitale & conseil. Structuration processus et transformation numérique Medoq.",act:"Envoyer pitch Medoq — explorer collaboration",pri:"Secondaire",sta:"En attente"},
+    {nom:"Marie Eugénie DEMBA",met:"Consultante Projets / Qualité (France)",opp:"Expertise pilotage qualité & amélioration continue. Structurer processus qualité déploiement Medoq.",act:"Recontacter — elle a dit qu'elle verrait ce qu'elle peut faire",pri:"Secondaire",sta:"À relancer"},
+    {nom:"Yaye Awa NDIAYE",met:"Founder — RAACINE (France)",opp:"Entrepreneur diaspora. Synergies entre projets diaspora, partage d'expériences.",act:"Échanger sur expérience entrepreneuriale diaspora",pri:"Secondaire",sta:"Actif"},
+    {nom:"Hasan BALLIKAYA",met:"Trésorier Dev. Numérique — Asso. Alber (Aulnay-sous-Bois)",opp:"Profil numérique, réseau associatif étudiant. Synergies accompagnement étudiants & mobilité numérique.",act:"Explorer synergies réseau numérique étudiant",pri:"Secondaire",sta:"En attente"}
+  ].map((c,i)=>({...c,id:"rs"+i,dateAjout:"2026-05-10",dernier:"2026-05-10"})),
+  idees:[],
+  erreurs:[{id:"er0",date:"2026-05-12",err:"Envoi de mon business plan sans signature de clause",pq:"Je me suis fié à la parole sans réfléchir",ev:"Rester concentré, faire confiance avec prudence et faire les choses bien",le:"Plus jamais je n'envoie de documents confidentiels sans clause",cat:"Business"}],
+  rappels:{
+    matin:[["06h00","Réveil — eau, pas de téléphone 30 min"],["07h00","Sport ou marche (30 min min.)"],["08h00","Lecture / apprentissage (20 min)"],["08h30","Planifier les 3 tâches prioritaires"],["09h00+","Bloc Deep Work — téléphone OFF"]],
+    soir:[["21h00","Remplir le Journal Quotidien"],["21h15","Cocher les habitudes du jour"],["21h30","Préparer les 3 tâches de demain"],["22h00","Pas d'écran — lecture / détente"],["22h30","Sommeil (objectif : 7-8h)"]],
+    hebdo:[["Lundi","Planifier les objectifs de la semaine","Hebdo"],["Vendredi","Remplir la Revue Hebdomadaire","Hebdo"],["Dimanche","Préparer la semaine suivante","Hebdo"],["1er","Remplir les Objectifs Mensuels","Mensuel"],["Fin de mois","Bilan : revenus, dépenses, progrès","Mensuel"]]
+  }
 };
 
-const MOCK_NOTIFS = [
-  { id:'n1', icon:'✅', text:'Votre Paracétamol 500mg est prêt à être récupéré à la Pharmacie Centrale de Dakar.', time:'14:30', date:'Aujourd\'hui', unread:true },
-  { id:'n2', icon:'🏥', text:'Nouvelle pharmacie partenaire Medoq : Pharmacie Amitié 24h (Yoff).', time:'09:15', date:'Aujourd\'hui', unread:true },
-  { id:'n3', icon:'⏰', text:'Rappel : votre réservation Coartem × 2 expire dans 1 heure. Récupérez-la vite !', time:'18:45', date:'Hier', unread:false },
-  { id:'n4', icon:'💊', text:'Le Coartem est de nouveau en stock à la Pharmacie Mer et Soleil.', time:'11:00', date:'Hier', unread:false },
+/* ---------- STATE ---------- */
+let S;
+function load(){
+  try{const raw=localStorage.getItem(KEY);if(raw){S=JSON.parse(raw);
+    // merge any new seed fields
+    for(const k in SEED){if(S[k]===undefined)S[k]=SEED[k];}
+  }else{S=JSON.parse(JSON.stringify(SEED));}}
+  catch(e){S=JSON.parse(JSON.stringify(SEED));}
+}
+let saveT;
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  const t=document.getElementById('savetag');t.classList.add('on');t.textContent="enregistré ✓";
+  clearTimeout(saveT);saveT=setTimeout(()=>{t.classList.remove('on');t.textContent="sauvegarde auto";},1400);
+}
+const $=id=>document.getElementById(id);
+const esc=s=>(s==null?"":String(s)).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const cls=s=>(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z]/g,"");
+const fdate=s=>{if(!s)return"";const d=new Date(s+"T00:00");return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});};
+
+/* ---------- WEEK HELPERS ---------- */
+function mondayOf(d){const x=new Date(d);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);x.setHours(0,0,0,0);return x;}
+function key(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}
+let curWeek=mondayOf(new Date());
+// if current week empty but seed week exists, start on the most recent week that has data
+function initWeek(){
+  const keys=Object.keys(S.habits||{}).sort();
+  const ck=key(curWeek);
+  if(!(S.habits&&S.habits[ck]) && keys.length){curWeek=mondayOf(new Date(keys[keys.length-1]+"T00:00"));}
+}
+function weekGrid(k){
+  if(!S.habits)S.habits={};
+  if(!S.habits[k])S.habits[k]=S.habitNames.map(()=>["","","","","","",""]);
+  // ensure rows match habit count
+  while(S.habits[k].length<S.habitNames.length)S.habits[k].push(["","","","","","",""]);
+  return S.habits[k];
+}
+
+/* ---------- TABS ---------- */
+const TABS=[
+  ["dashboard","Pilotage","M3 3v18h18 M7 14l3-4 3 3 4-6"],
+  ["journal","Journal","M5 3h11l3 3v15H5z M16 3v4h4"],
+  ["habitudes","Habitudes","M4 12l4 4 12-12"],
+  ["objectifs","Objectifs","M12 2v20 M2 12h20"],
+  ["revue","Revue","M3 5h18 M3 12h18 M3 19h12"],
+  ["reseau","Réseau","M6 8a3 3 0 100-6 3 3 0 000 6z M18 8a3 3 0 100-6 3 3 0 000 6z M12 22a4 4 0 00-12 0 M24 22a4 4 0 00-8 0"],
+  ["idees","Idées","M12 3a6 6 0 00-4 10c1 1 1 2 1 3h6c0-1 0-2 1-3a6 6 0 00-4-10z M9 20h6"],
+  ["erreurs","Leçons","M12 2L2 20h20z M12 9v5 M12 17v.5"],
+  ["vision","Vision","M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z M12 9a3 3 0 100 6 3 3 0 000-6z"],
+  ["rappels","Rappels","M12 3a6 6 0 00-6 6v4l-2 3h16l-2-3V9a6 6 0 00-6-6z M10 21h4"]
 ];
-
-function getMockResas() { return JSON.parse(localStorage.getItem('medoq_mock_resas') || '[]'); }
-function saveMockResas(r) { localStorage.setItem('medoq_mock_resas', JSON.stringify(r)); }
-function getMockStock() {
-  const s = localStorage.getItem('medoq_mock_stock');
-  return s ? JSON.parse(s) : JSON.parse(JSON.stringify(MOCK_STOCK_DEFAULT));
+function buildTabs(){
+  const c=$('tabscroll');
+  c.innerHTML=TABS.map(t=>`<button class="tab" data-s="${t[0]}" onclick="go('${t[0]}')"><svg viewBox="0 0 24 24"><path d="${t[2]}"/></svg><span>${t[1]}</span></button>`).join("");
 }
-function saveMockStock(s) { localStorage.setItem('medoq_mock_stock', JSON.stringify(s)); }
-
-function mockAvailableAt(medId) {
-  const stock = getMockStock();
-  return Object.entries(stock).flatMap(([phId, items]) => {
-    const it = items.find(i => i.medicationId === medId && i.quantity > 0);
-    if (!it) return [];
-    const ph = MOCK_PHARMACIES.find(p => p.id === phId);
-    return ph ? [{ pharmacy_id:phId, pharmacy_name:ph.name, address:ph.address, quantity:it.quantity, price:it.price }] : [];
-  });
+function go(id){
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('active',s.id===id));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.s===id));
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function routeMatch(pattern, path) {
-  const pp = pattern.split('/'), rp = path.split('/');
-  if (pp.length !== rp.length) return null;
-  const params = {};
-  for (let i = 0; i < pp.length; i++) {
-    if (pp[i].startsWith(':')) params[pp[i].slice(1)] = rp[i];
-    else if (pp[i] !== rp[i]) return null;
-  }
-  return params;
-}
-function qs(path) {
-  const i = path.indexOf('?'); if (i < 0) return {};
-  return Object.fromEntries(path.slice(i+1).split('&').map(p => p.split('=')).map(([k,v]) => [decodeURIComponent(k), decodeURIComponent(v||'')]));
-}
-function cleanPath(path) { return path.split('?')[0]; }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// MOCK API ROUTER
-// ═══════════════════════════════════════════════════════════════════════════
-async function apiMock(method, path, body) {
-  await new Promise(r => setTimeout(r, 120 + Math.random() * 80));
-  const cp = cleanPath(path), q = qs(path);
-
-  // AUTH
-  if (method==='POST' && cp==='/auth/login') {
-    const u = MOCK_USERS.find(x => x.phone===body.phone && x.password===body.password);
-    if (!u) throw new Error('Numéro ou mot de passe incorrect');
-    return { data: { accessToken:'mock-'+u.id, user:{id:u.id,name:u.name,phone:u.phone,role:u.role}, pharmacyId:u.pharmacyId||null }};
-  }
-  if (method==='GET' && cp==='/auth/me') {
-    if (!S.user) throw new Error('Non authentifié');
-    return { data: S.user };
-  }
-
-  // MEDICATIONS
-  if (method==='GET' && cp==='/medications/popular') return { data: MOCK_MEDS.slice(0,8) };
-  if (method==='GET' && cp==='/medications/categories') return { data:[...new Set(MOCK_MEDS.map(m=>m.category))] };
-  if (method==='GET' && cp==='/medications') {
-    const qv=(q.q||'').toLowerCase();
-    const meds = qv ? MOCK_MEDS.filter(m=>m.name.toLowerCase().includes(qv)||(m.dci||'').toLowerCase().includes(qv)||(m.category||'').toLowerCase().includes(qv)) : MOCK_MEDS;
-    return { data:{ medications:meds } };
-  }
-  const m1 = routeMatch('/medications/:id', cp);
-  if (method==='GET' && m1) {
-    const med = MOCK_MEDS.find(m=>m.id===m1.id);
-    if (!med) throw new Error('Médicament non trouvé');
-    return { data:{ ...med, availableAt:mockAvailableAt(med.id) } };
-  }
-
-  // PHARMACIES
-  if (method==='GET' && cp==='/pharmacies') return { data:{ pharmacies:MOCK_PHARMACIES } };
-  if (method==='GET' && cp==='/pharmacies/me') {
-    const ph = MOCK_PHARMACIES.find(p=>p.id===S.pharmacyId);
-    if (!ph) throw new Error('Pharmacie non trouvée');
-    return { data:ph };
-  }
-  const stockGet = routeMatch('/pharmacies/:id/stock', cp);
-  if (method==='GET' && stockGet) {
-    const stock = getMockStock();
-    return { data: stock[stockGet.id]||[] };
-  }
-  const stockPut = routeMatch('/pharmacies/:phId/stock/:medId', cp);
-  if (method==='PUT' && stockPut) {
-    const stock = getMockStock();
-    const items = stock[stockPut.phId]||[];
-    const idx = items.findIndex(i=>i.medicationId===stockPut.medId);
-    if (idx>=0) {
-      items[idx] = { ...items[idx], quantity:body.quantity, price:body.price, threshold:body.threshold||items[idx].threshold };
-      items[idx].isLow = items[idx].quantity <= items[idx].threshold && items[idx].quantity > 0;
-    }
-    stock[stockPut.phId] = items;
-    saveMockStock(stock);
-    return { data:items[idx] };
-  }
-  const stockPost = routeMatch('/pharmacies/:phId/stock', cp);
-  if (method==='POST' && stockPost) {
-    const stock = getMockStock();
-    const items = stock[stockPost.phId]||[];
-    const med = MOCK_MEDS.find(m=>m.id===body.medicationId);
-    if (!med) throw new Error('Médicament non trouvé');
-    if (items.find(i=>i.medicationId===body.medicationId)) throw new Error('Médicament déjà dans le stock');
-    const newItem = { medicationId:body.medicationId, medicationName:med.name, form:med.form, dosage:med.dosage, quantity:body.quantity, price:body.price, threshold:body.threshold||5, isLow:false };
-    newItem.isLow = newItem.quantity <= newItem.threshold && newItem.quantity > 0;
-    items.push(newItem);
-    stock[stockPost.phId] = items;
-    saveMockStock(stock);
-    return { data:newItem };
-  }
-  const phGet = routeMatch('/pharmacies/:id', cp);
-  if (method==='GET' && phGet) {
-    const ph = MOCK_PHARMACIES.find(p=>p.id===phGet.id);
-    if (!ph) throw new Error('Pharmacie non trouvée');
-    return { data:ph };
-  }
-
-  // RESERVATIONS
-  if (method==='POST' && cp==='/reservations') {
-    const stock = getMockStock();
-    const items = stock[body.pharmacyId]||[];
-    const sIdx = items.findIndex(i=>i.medicationId===body.medicationId);
-    if (sIdx<0 || items[sIdx].quantity < body.quantity) throw new Error('Stock insuffisant pour cette pharmacie');
-    const med = MOCK_MEDS.find(m=>m.id===body.medicationId);
-    const ph = MOCK_PHARMACIES.find(p=>p.id===body.pharmacyId);
-    items[sIdx].quantity -= body.quantity;
-    items[sIdx].isLow = items[sIdx].quantity <= items[sIdx].threshold && items[sIdx].quantity > 0;
-    saveMockStock(stock);
-    const resa = {
-      id:'r'+Date.now(), refNumber:'MDQ-'+Math.random().toString(36).slice(2,7).toUpperCase(),
-      patientId:S.user.id, patientName:S.user.name, patientPhone:S.user.phone,
-      pharmacyId:body.pharmacyId, pharmacyName:ph.name,
-      medicationId:body.medicationId, medicationName:med.name,
-      quantity:body.quantity, unitPrice:items[sIdx].price+body.quantity*0, totalAmount:items[sIdx].price*body.quantity+(items[sIdx].quantity*0),
-      status:'CONFIRMED', createdAt:new Date().toISOString(),
-    };
-    // recalculate price from original stock price
-    resa.unitPrice = items[sIdx].price + (body.quantity > 0 ? 0 : 0); // price before decrement
-    resa.totalAmount = resa.unitPrice * body.quantity;
-    // actually price was already correct before decrement, fix it
-    const priceForCalc = (getMockStock()[body.pharmacyId]||[]).find(i=>i.medicationId===body.medicationId)?.price || items[sIdx].price;
-    resa.unitPrice = body._price || priceForCalc;
-    resa.totalAmount = resa.unitPrice * body.quantity;
-    const resas = getMockResas(); resas.push(resa); saveMockResas(resas);
-    return { data:resa };
-  }
-  if (method==='GET' && cp==='/reservations/pharmacy') {
-    const all = getMockResas().filter(r=>r.pharmacyId===S.pharmacyId);
-    const out = q.status ? all.filter(r=>r.status===q.status) : all;
-    return { data: out.slice().reverse() };
-  }
-  if (method==='GET' && cp==='/reservations') {
-    const all = getMockResas().filter(r=>r.patientId===S.user?.id);
-    const out = q.status ? all.filter(r=>r.status===q.status) : all;
-    return { data:{ reservations:out.slice().reverse() } };
-  }
-  const resaAction = cp.match(/^\/reservations\/([^/]+)\/(cancel|ready|complete)$/);
-  if (method==='POST' && resaAction) {
-    const resas = getMockResas();
-    const idx = resas.findIndex(r=>r.id===resaAction[1]);
-    if (idx<0) throw new Error('Réservation non trouvée');
-    resas[idx].status = {cancel:'CANCELLED',ready:'READY',complete:'COMPLETED'}[resaAction[2]];
-    saveMockResas(resas);
-    return { data:resas[idx] };
-  }
-
-  // PAYMENTS
-  if (method==='POST' && cp==='/payments/initiate') return { data:{ status:'PENDING' } };
-
-  throw new Error('Mock: route inconnue — ' + method + ' ' + path);
+/* ---------- DASHBOARD ---------- */
+function editRule(){const v=prompt("Ta règle du jour :",S.ruleOfDay);if(v!=null){S.ruleOfDay=v.trim();save();renderDash();}}
+function saveFocus(){S.focus={date:key(new Date()),text:$('focusInput').value};save();}
+function renderDash(){
+  $('ruleView').textContent="« "+S.ruleOfDay+" »";
+  $('focusInput').value=(S.focus&&S.focus.text)||"";
+  // habits: most recent week with any data
+  const keys=Object.keys(S.habits||{}).sort();
+  let dk=keys.length?keys[keys.length-1]:key(curWeek);
+  const g=weekGrid(dk);
+  let done=0;
+  g.forEach(r=>r.forEach(c=>{if(c==="y")done++;}));
+  const maxCells=S.habitNames.length*7;
+  const pct=Math.round(done/maxCells*100);
+  $('mHab').textContent=done;$('mHabSub').textContent="/ "+maxCells+" max";
+  $('mHabBar').style.width=pct+"%";
+  $('mPct').textContent=pct+"%";
+  $('mPctBar').style.width=pct+"%";
+  // energy avg last 7 journal entries
+  const en=S.journal.filter(j=>j.en!=="").slice(-7).map(j=>parseFloat(j.en)).filter(n=>!isNaN(n));
+  $('mEner').textContent=en.length?(en.reduce((a,b)=>a+b,0)/en.length).toFixed(1):"—";
+  // last revue note
+  const notes=S.revue.filter(r=>r.note!=="");
+  $('mRevue').textContent=notes.length?notes[notes.length-1].note:"—";
+  // finances
+  const rev=S.journal.reduce((a,j)=>a+(parseFloat(j.rv)||0),0);
+  const dep=S.journal.reduce((a,j)=>a+(parseFloat(j.dp)||0),0);
+  $('mRev').textContent=rev.toFixed(0);$('mDep').textContent=dep.toFixed(0);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════════════════════════
-// Si ouvert en file:// ou sans serveur → mode mock directement
-let IS_MOCK = window.location.protocol === 'file:';
-let S = {
-  token:null, user:null, pharmacyId:null,
-  screenStack:[],
-  currentMed:null, currentPharma:null,
-  resQty:1, resPayment:'WAVE', resPrice:0,
-  allStock:[], allPhResas:[],
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// API LAYER
-// ═══════════════════════════════════════════════════════════════════════════
-async function apiReal(method, path, body) {
-  if (S.token?.startsWith('mock-')) throw Object.assign(new TypeError('mock-token'), {name:'TypeError'});
-  const headers = {'Content-Type':'application/json'};
-  if (S.token) headers['Authorization'] = 'Bearer ' + S.token;
-  const ctrl = new AbortController();
-  const tid = setTimeout(() => ctrl.abort(), 6000);
-  try {
-    const r = await fetch(API_BASE + path, { method, headers, body:body?JSON.stringify(body):undefined, signal:ctrl.signal });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.message || 'Erreur serveur');
-    return data;
-  } finally { clearTimeout(tid); }
+/* ---------- JOURNAL ---------- */
+function addJournal(){
+  const j={date:$('j_date').value||key(new Date()),obj:$('j_obj').value,t1:$('j_t1').value,t2:$('j_t2').value,t3:$('j_t3').value,
+    dw:$('j_dw').value,ap:$('j_ap').value,bz:$('j_bz').value,en:$('j_en').value,sp:$('j_sp').value,so:$('j_so').value,
+    rv:$('j_rv').value,dp:$('j_dp').value,di:$('j_di').value,gr:$('j_gr').value,dm:$('j_dm').value};
+  S.journal.push(j);S.journal.sort((a,b)=>a.date<b.date?-1:1);save();
+  ['j_obj','j_t1','j_t2','j_t3','j_dw','j_ap','j_bz','j_en','j_sp','j_so','j_rv','j_dp','j_di','j_gr','j_dm'].forEach(i=>$(i).value="");
+  $('jAdd').open=false;renderJournal();renderDash();
 }
-
-async function api(method, path, body) {
-  try {
-    const res = await apiReal(method, path, body);
-    if (IS_MOCK) { IS_MOCK = false; updateDemoBadge(); }
-    return res;
-  } catch(e) {
-    const isNet = e.name==='TypeError' || e.name==='AbortError';
-    if (isNet) {
-      IS_MOCK = true; updateDemoBadge();
-      return apiMock(method, path, body);
-    }
-    throw e;
-  }
-}
-const GET  = p     => api('GET',  p);
-const POST = (p,b) => api('POST', p, b);
-const PUT  = (p,b) => api('PUT',  p, b);
-
-// ═══════════════════════════════════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════════════════════════════════
-function goScreen(id, push=true) {
-  const cur = document.querySelector('.screen:not(.hidden):not(.slide-left)');
-  if (cur && push) { cur.classList.add('slide-left'); S.screenStack.push(cur.id); }
-  const next = document.getElementById(id);
-  next.classList.remove('hidden','slide-left');
-}
-function goBack() {
-  if (!S.screenStack.length) return;
-  const prev = S.screenStack.pop();
-  const cur = document.querySelector('.screen:not(.hidden)');
-  if (cur) cur.classList.add('hidden');
-  document.getElementById(prev).classList.remove('slide-left','hidden');
-}
-function switchTab(tab) {
-  S.screenStack = [];
-  const map = {home:'screen-home',search:'screen-search',reservations:'screen-reservations',profile:'screen-profile'};
-  document.querySelectorAll('.screen').forEach(s => { s.classList.add('hidden'); s.classList.remove('slide-left'); });
-  document.getElementById(map[tab]).classList.remove('hidden');
-  // Update active state on all bnavs
-  document.querySelectorAll('.bnav-item').forEach(b => {
-    const t = b.getAttribute('onclick')?.match(/switchTab\('(\w+)'\)/)?.[1];
-    b.classList.toggle('active', t===tab);
-  });
-  if (tab==='search') {
-    const inp = document.getElementById('search-input');
-    inp.value='';
-    document.getElementById('search-results').innerHTML='<div class="empty"><div class="emoji">💊</div><p>Tapez le nom d\'un médicament</p></div>';
-    setTimeout(()=>inp.focus(), 300);
-  }
-  if (tab==='reservations') loadMyResas('');
-}
-function pSwitchTab(tab) {
-  S.screenStack = [];
-  const map = {pdash:'screen-pdash',presas:'screen-presas',pstock:'screen-pstock',pprofil:'screen-pprofil'};
-  document.querySelectorAll('.screen').forEach(s => { s.classList.add('hidden'); s.classList.remove('slide-left'); });
-  document.getElementById(map[tab]).classList.remove('hidden');
-  document.querySelectorAll('.bnav-item').forEach(b => {
-    const t = b.getAttribute('onclick')?.match(/pSwitchTab\('(\w+)'\)/)?.[1];
-    if (t) b.classList.toggle('active', t===tab);
-  });
-  if (tab==='presas') loadPhResas('');
-  if (tab==='pstock') loadStock();
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// TOAST + DEMO BADGE
-// ═══════════════════════════════════════════════════════════════════════════
-let toastTimer;
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
-}
-function updateDemoBadge() {
-  const b = document.getElementById('demo-badge');
-  b.style.display = IS_MOCK ? 'flex' : 'none';
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════════════════════════════════
-let loginRole = 'patient';
-function setRole(r) {
-  loginRole = r;
-  document.getElementById('role-patient').classList.toggle('active', r==='patient');
-  document.getElementById('role-pharma').classList.toggle('active', r==='pharmacie');
-  document.getElementById('login-phone').value = r==='patient' ? '+221770000001' : '+221770000002';
-}
-
-async function doLogin() {
-  const phone = document.getElementById('login-phone').value.trim();
-  const password = document.getElementById('login-pass').value;
-  const btn = document.querySelector('#screen-login .btn-primary');
-  btn.textContent = 'Connexion…'; btn.disabled = true;
-  try {
-    const d = await POST('/auth/login', { phone, password });
-    S.token = d.data.accessToken;
-    S.user = d.data.user;
-    S.pharmacyId = d.data.pharmacyId || null;
-    localStorage.setItem('medoq_token', S.token);
-    localStorage.setItem('medoq_user', JSON.stringify(S.user));
-    localStorage.setItem('medoq_phid', S.pharmacyId || '');
-    if (S.user.role === 'PHARMACY_STAFF') enterPharmacyMode();
-    else enterPatientMode();
-  } catch(e) {
-    toast('❌ ' + e.message);
-  } finally {
-    btn.textContent = 'Se connecter'; btn.disabled = false;
-  }
-}
-
-function enterPatientMode() {
-  document.getElementById('home-name').textContent = S.user.name;
-  document.getElementById('profile-name').textContent = S.user.name;
-  document.getElementById('profile-phone').textContent = S.user.phone;
-  document.getElementById('profile-avatar').textContent = S.user.name[0].toUpperCase();
-  S.screenStack = [];
-  document.querySelectorAll('.screen').forEach(s => { s.classList.add('hidden'); s.classList.remove('slide-left'); });
-  const home = document.getElementById('screen-home');
-  home.classList.remove('hidden','slide-left');
-  home.style.transform = 'none';
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    home.style.transform = '';
-    document.body.classList.remove('notransition');
-  }));
-  loadHome();
-}
-
-function enterPharmacyMode() {
-  document.getElementById('pprofil-name').textContent = S.user.name;
-  S.screenStack = [];
-  document.querySelectorAll('.screen').forEach(s => { s.classList.add('hidden'); s.classList.remove('slide-left'); });
-  const dash = document.getElementById('screen-pdash');
-  dash.classList.remove('hidden','slide-left');
-  dash.style.transform = 'none';
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    dash.style.transform = '';
-    document.body.classList.remove('notransition');
-  }));
-  loadPhDashboard();
-}
-
-function doLogout() {
-  S.token = null; S.user = null; S.pharmacyId = null;
-  localStorage.removeItem('medoq_token');
-  localStorage.removeItem('medoq_user');
-  localStorage.removeItem('medoq_phid');
-  S.screenStack = [];
-  IS_MOCK = false; updateDemoBadge();
-  document.querySelectorAll('.screen').forEach(s => { s.classList.add('hidden'); s.classList.remove('slide-left'); });
-  const login = document.getElementById('screen-login');
-  login.classList.remove('hidden','slide-left');
-  login.style.transform = 'none';
-  requestAnimationFrame(() => requestAnimationFrame(() => { login.style.transform = ''; }));
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PATIENT — HOME
-// ═══════════════════════════════════════════════════════════════════════════
-async function loadHome() {
-  try {
-    // Guard pharmacies
-    const guards = (IS_MOCK ? MOCK_PHARMACIES : []).filter(p=>p.isGuard);
-    const gs = document.getElementById('guard-section');
-    if (guards.length) {
-      gs.innerHTML = `<div style="margin:0 16px 4px;padding:12px 14px;background:#FFF3E0;border-radius:var(--radius);display:flex;align-items:center;gap:10px">
-        <span style="font-size:22px">🌙</span>
-        <div><div style="font-size:13px;font-weight:700;color:var(--orange)">Pharmacie de garde</div>
-        <div style="font-size:13px;color:var(--black)">${guards[0].name}</div>
-        <div style="font-size:12px;color:var(--gray)">${guards[0].address}</div></div></div>`;
-    } else gs.innerHTML = '';
-
-    const [pop, nearby] = await Promise.all([GET('/medications/popular'), GET('/pharmacies?limit=4')]);
-
-    // Popular meds
-    const pl = document.getElementById('popular-list');
-    pl.innerHTML = '';
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'display:flex;gap:12px;padding:4px 16px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory';
-    (pop.data||[]).slice(0,8).forEach(m => {
-      const el = document.createElement('div');
-      el.style.cssText = 'min-width:130px;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;cursor:pointer;scroll-snap-align:start;flex-shrink:0';
-      el.innerHTML = `<div style="font-size:28px;margin-bottom:8px">💊</div>
-        <div style="font-size:13px;font-weight:700;line-height:1.3">${m.name}</div>
-        <div style="font-size:11px;color:var(--gray);margin-top:4px">${m.category||''}</div>
-        <div style="margin-top:8px"><span class="badge ${m.requiresPrescription?'badge-orange':'badge-green'}" style="font-size:11px">${m.requiresPrescription?'Ordonnance':'Libre'}</span></div>`;
-      el.onclick = () => openMed(m.id);
-      wrap.appendChild(el);
-    });
-    pl.appendChild(wrap);
-
-    // Nearby pharmacies
-    const nl = document.getElementById('nearby-list');
-    nl.innerHTML = '';
-    const pharmacies = nearby.data?.pharmacies || nearby.data || [];
-    pharmacies.slice(0,4).forEach(p => nl.appendChild(buildPhCard(p)));
-  } catch(e) { toast('⚠️ ' + e.message); }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PATIENT — SEARCH
-// ═══════════════════════════════════════════════════════════════════════════
-let searchTimer;
-function doSearch(q) {
-  clearTimeout(searchTimer);
-  const el = document.getElementById('search-results');
-  if (!q.trim()) {
-    el.innerHTML = '<div class="empty"><div class="emoji">💊</div><p>Tapez le nom d\'un médicament</p></div>';
-    return;
-  }
-  el.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
-  searchTimer = setTimeout(async () => {
-    try {
-      const d = await GET('/medications?q=' + encodeURIComponent(q));
-      const meds = d.data?.medications || [];
-      el.innerHTML = '';
-      if (!meds.length) {
-        el.innerHTML = `<div class="empty"><div class="emoji">🔍</div><p>Aucun résultat pour "${q}"</p></div>`;
-        return;
-      }
-      meds.forEach(m => {
-        const div = document.createElement('div');
-        div.className = 'med-card-h';
-        div.innerHTML = `<span style="font-size:24px">💊</span>
-          <div style="flex:1">
-            <div style="font-size:15px;font-weight:700">${m.name}</div>
-            <div style="font-size:12px;color:var(--gray);margin-top:2px">${m.dci||''} ${m.form?'· '+m.form:''} ${m.dosage?'· '+m.dosage:''}</div>
-          </div>
-          <span class="badge ${m.requiresPrescription?'badge-orange':'badge-green'}">${m.requiresPrescription?'Ordo':'Libre'}</span>`;
-        div.onclick = () => openMed(m.id);
-        el.appendChild(div);
-      });
-    } catch(e) {
-      el.innerHTML = `<div class="empty"><div class="emoji">⚠️</div><p>${e.message}</p></div>`;
-    }
-  }, 300);
-}
-
-async function loadCategories() {
-  try {
-    const d = await GET('/medications/categories');
-    const el = document.getElementById('search-cats');
-    el.innerHTML = '';
-    const allBtn = document.createElement('button');
-    allBtn.className = 'tab active'; allBtn.textContent = 'Tous';
-    allBtn.onclick = () => {
-      document.querySelectorAll('#search-cats .tab').forEach(b=>b.classList.remove('active'));
-      allBtn.classList.add('active');
-      document.getElementById('search-input').value='';
-      document.getElementById('search-results').innerHTML='<div class="empty"><div class="emoji">💊</div><p>Tapez le nom d\'un médicament</p></div>';
-    };
-    el.appendChild(allBtn);
-    (d.data||[]).forEach(cat => {
-      const b = document.createElement('button');
-      b.className = 'tab'; b.textContent = cat;
-      b.onclick = () => {
-        document.querySelectorAll('#search-cats .tab').forEach(x=>x.classList.remove('active'));
-        b.classList.add('active');
-        document.getElementById('search-input').value = cat;
-        doSearch(cat);
-      };
-      el.appendChild(b);
-    });
-  } catch(_) {}
-}
-
-function openNotifs() {
-  loadNotifs();
-  goScreen('screen-notifs');
-}
-
-function loadNotifs() {
-  const el = document.getElementById('notifs-list');
-  el.innerHTML = '';
-  let lastDate = '';
-  MOCK_NOTIFS.forEach(n => {
-    if (n.date !== lastDate) {
-      const sep = document.createElement('div');
-      sep.className = 'section-label';
-      sep.textContent = n.date;
-      el.appendChild(sep);
-      lastDate = n.date;
-    }
-    const div = document.createElement('div');
-    div.className = 'notif-row' + (n.unread ? ' notif-unread' : '');
-    div.innerHTML = `<div style="font-size:28px;flex-shrink:0">${n.icon}</div>
-      <div style="flex:1">
-        <div style="font-size:14px;color:var(--black);line-height:1.4">${n.text}</div>
-        <div style="font-size:12px;color:var(--gray);margin-top:4px">${n.time}</div>
-      </div>
-      ${n.unread?'<div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:6px"></div>':''}`;
-    el.appendChild(div);
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PATIENT — MED DETAIL
-// ═══════════════════════════════════════════════════════════════════════════
-async function openMed(id) {
-  goScreen('screen-med');
-  document.getElementById('med-title').textContent = '…';
-  document.getElementById('med-name').textContent = '';
-  document.getElementById('med-pharmacies').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
-  try {
-    const d = await GET('/medications/' + id);
-    const m = d.data;
-    S.currentMed = m;
-    document.getElementById('med-title').textContent = m.name;
-    document.getElementById('med-name').textContent = m.name;
-    document.getElementById('med-dci').textContent = m.dci || '';
-    document.getElementById('med-tags').innerHTML =
-      `<span class="badge badge-gray">${m.form||'—'}</span>
-       <span class="badge badge-gray">${m.dosage||'—'}</span>
-       <span class="badge badge-purple">${m.category||''}</span>
-       <span class="badge ${m.requiresPrescription?'badge-orange':'badge-green'}">${m.requiresPrescription?'Ordonnance requise':'Sans ordonnance'}</span>`;
-    document.getElementById('med-desc').textContent = m.description || '';
-
-    const pl = document.getElementById('med-pharmacies');
-    const avail = m.availableAt || [];
-    if (!avail.length) {
-      pl.innerHTML = '<div class="empty"><div class="emoji">😔</div><p>Rupture de stock dans toutes les pharmacies proches</p></div>';
-      return;
-    }
-    pl.innerHTML = '';
-    avail.forEach(s => {
-      const div = document.createElement('div');
-      div.className = 'ph-card';
-      div.innerHTML = `
-        <div class="ph-card-head">
-          <div class="ph-icon">🏥</div>
-          <div style="flex:1">
-            <div style="font-size:15px;font-weight:700">${s.pharmacy_name}</div>
-            <div style="font-size:12px;color:var(--gray);margin-top:2px">${s.address||''}</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:16px;font-weight:800;color:var(--green)">${fmtFCFA(s.price)}</div>
-            <div style="font-size:11px;color:var(--gray)">qté: ${s.quantity}</div>
-          </div>
+function delJournal(i){if(confirm("Supprimer cette entrée ?")){S.journal.splice(i,1);save();renderJournal();renderDash();}}
+function renderJournal(){
+  const rev=S.journal.reduce((a,j)=>a+(parseFloat(j.rv)||0),0);
+  const dep=S.journal.reduce((a,j)=>a+(parseFloat(j.dp)||0),0);
+  $('jRev').textContent=rev.toFixed(0)+" €";$('jDep').textContent=dep.toFixed(0)+" €";
+  const sd=rev-dep;$('jSolde').textContent=sd.toFixed(0)+" €";$('jSolde').style.color=sd<0?"var(--red)":"var(--green)";
+  const list=[...S.journal].map((j,i)=>({j,i})).reverse();
+  $('jList').innerHTML=list.length?list.map(({j,i})=>`
+    <div class="item">
+      <button class="del" onclick="delJournal(${i})">✕</button>
+      <h4>${fdate(j.date)} — ${esc(j.obj)||"<span style='color:var(--txt3)'>sans titre</span>"}</h4>
+      <div class="meta">
+        ${[j.t1,j.t2,j.t3].filter(Boolean).map(t=>"• "+esc(t)).join("&nbsp; ")||""}
+        <div style="margin-top:6px">
+        ${j.en?`<b>Énergie</b> ${esc(j.en)}/10&nbsp; `:""}${j.sp?`<b>Sport</b> ${j.sp}&nbsp; `:""}${j.dw&&j.dw!=="0"?`<b>Deep Work</b> ${esc(j.dw)}h&nbsp; `:""}${j.so?`<b>Sommeil</b> ${esc(j.so)}h&nbsp; `:""}${(parseFloat(j.dp)||0)?`<b>Dép.</b> ${esc(j.dp)}€`:""}
         </div>
-        <div class="ph-actions">
-          <button class="btn btn-primary btn-sm" onclick='openReserve(${JSON.stringify({id:s.pharmacy_id,name:s.pharmacy_name,address:s.address})},${JSON.stringify({id:m.id,name:m.name,form:m.form,dosage:m.dosage})},${s.price})'>Réserver</button>
-          <button class="btn btn-outline btn-sm" onclick='openPharmacy("${s.pharmacy_id}")'>Voir pharmacie</button>
-        </div>`;
-      pl.appendChild(div);
-    });
-  } catch(e) { toast('❌ ' + e.message); }
+        ${j.ap?`<div style="margin-top:6px"><b>Appris :</b> ${esc(j.ap)}</div>`:""}
+        ${j.gr?`<div style="margin-top:3px"><b>Gratitude :</b> ${esc(j.gr)}</div>`:""}
+        ${j.dm?`<div style="margin-top:3px"><b>Demain :</b> ${esc(j.dm)}</div>`:""}
+      </div>
+    </div>`).join(""):'<div class="empty">Aucune entrée pour l\'instant.</div>';
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// PATIENT — PHARMACY DETAIL
-// ═══════════════════════════════════════════════════════════════════════════
-async function openPharmacy(id) {
-  goScreen('screen-pharmacy');
-  document.getElementById('ph-stock-list').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
-  try {
-    const [pd, sd] = await Promise.all([GET('/pharmacies/'+id), GET('/pharmacies/'+id+'/stock')]);
-    const p = pd.data; S.currentPharma = p;
-    document.getElementById('ph-title').textContent = p.name;
-    document.getElementById('ph-name').textContent = p.name;
-    document.getElementById('ph-addr').textContent = p.address;
-    document.getElementById('ph-hours').textContent = p.openingHours ? '⏰ '+p.openingHours : '';
-    document.getElementById('ph-phone').textContent = p.phone ? '📞 '+p.phone : '';
-    document.getElementById('ph-rating-row').innerHTML = p.rating
-      ? `<span style="color:#F57C00">★</span><span style="font-weight:700">${p.rating}</span><span style="font-size:13px;color:var(--gray)">${p.reviewCount?'('+p.reviewCount+' avis)':''}</span>${p.isGuard?'<span class="guard-badge" style="margin-left:auto">🌙 Garde</span>':''}`
-      : '';
+/* ---------- HABITUDES ---------- */
+function shiftWeek(n){curWeek.setDate(curWeek.getDate()+n*7);renderHabits();renderDash();}
+function toggleH(r,c){
+  const k=key(curWeek);const g=weekGrid(k);const cur=g[r][c];
+  g[r][c]=cur===""?"y":cur==="y"?"n":"";save();renderHabits();renderDash();
+}
+function renderHabits(){
+  const k=key(curWeek);const g=weekGrid(k);
+  const end=new Date(curWeek);end.setDate(end.getDate()+6);
+  const f=d=>("0"+d.getDate()).slice(-2)+"/"+("0"+(d.getMonth()+1)).slice(-2);
+  // week number relative to S01 (29/12/2025)
+  const wn=Math.round((curWeek-mondayOf(new Date(2025,11,29)))/(7*864e5))+1;
+  $('wkLabel').textContent="Semaine "+(wn>0&&wn<54?("S"+("0"+wn).slice(-2)):key(curWeek));
+  $('wkDates').textContent=f(curWeek)+" → "+f(end);
+  const days=["L","M","M","J","V","S","D"];
+  let totalDone=0,totalCells=0;const colTot=[0,0,0,0,0,0,0];
+  let rows=S.habitNames.map((name,r)=>{
+    let sc=0;
+    const cells=g[r].map((v,c)=>{
+      if(v==="y"){sc++;totalDone++;totalCells++;}else if(v==="n"){totalCells++;}
+      const cl=v==="y"?"y":v==="n"?"n":"";
+      const sym=v==="y"?"✓":v==="n"?"✗":"";
+      return `<td><div class="hcell ${cl}" onclick="toggleH(${r},${c})">${sym}</div></td>`;
+    }).join("");
+    return `<tr><td class="hn">${esc(name)}</td>${cells}<td class="hsc">${sc}</td></tr>`;
+  }).join("");
+  $('hBody').innerHTML=rows;
+  const maxC=S.habitNames.length*7;
+  $('hTotal').textContent=totalDone+" / "+maxC;
+  $('hPct').textContent=Math.round(totalDone/maxC*100)+" %";
+}
 
-    const sl = document.getElementById('ph-stock-list');
-    sl.innerHTML = '';
-    const avail = (sd.data||[]).filter(s=>s.quantity>0);
-    if (!avail.length) {
-      sl.innerHTML = '<div class="empty"><div class="emoji">📦</div><p>Aucun médicament disponible actuellement</p></div>';
-      return;
-    }
-    const card = document.createElement('div'); card.className='card';
-    avail.forEach(s => {
-      const row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--lgray);gap:12px;cursor:pointer';
-      row.innerHTML = `<span style="font-size:20px">💊</span>
-        <div style="flex:1">
-          <div style="font-size:14px;font-weight:700">${s.medicationName}</div>
-          <div style="font-size:12px;color:var(--gray)">${s.form||''} ${s.dosage||''}</div>
+/* ---------- OBJECTIFS ---------- */
+function objSet(i,f,v){S.objectifs[i][f]=v;save();}
+function renderObj(){
+  $('oList').innerHTML=S.objectifs.map((o,i)=>`
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-family:var(--disp);font-size:18px;font-weight:600">${esc(o.mois)}</div>
+        <select style="width:auto;padding:6px 28px 6px 10px;font-size:12px" onchange="objSet(${i},'statut',this.value);renderObjPill(${i},this.value)">
+          ${["En cours","Atteint","Non atteint","Reporté"].map(s=>`<option ${o.statut===s?"selected":""}>${s}</option>`).join("")}
+        </select>
+      </div>
+      <label class="fld"><span>Objectif principal 1</span><input value="${esc(o.o1)}" oninput="objSet(${i},'o1',this.value)"></label>
+      <label class="fld"><span>Objectif principal 2</span><input value="${esc(o.o2)}" oninput="objSet(${i},'o2',this.value)"></label>
+      <label class="fld"><span>Objectif principal 3</span><input value="${esc(o.o3)}" oninput="objSet(${i},'o3',this.value)"></label>
+      <label class="fld"><span>Objectifs secondaires</span><textarea oninput="objSet(${i},'sec',this.value)">${esc(o.sec)}</textarea></label>
+      <label class="fld"><span>Ce que je dois éviter</span><textarea oninput="objSet(${i},'eviter',this.value)">${esc(o.eviter)}</textarea></label>
+    </div>`).join("");
+}
+function renderObjPill(){}
+
+/* ---------- REVUE ---------- */
+function revSet(i,f,v){S.revue[i][f]=v;save();if(f==="note")renderDash();}
+function renderRevue(){
+  $('rList').innerHTML=S.revue.map((r,i)=>{
+    const filled=r.avance||r.ralenti||r.arreter||r.priorite||r.note;
+    return `<details class="add"><summary><div class="addbtn" style="justify-content:space-between;${filled?'border-color:var(--gold-dim);color:var(--gold-b)':'color:var(--txt2)'}"><span>${r.sem} · ${esc(r.periode)}</span><span>${r.note?("★ "+esc(r.note)+"/10"):(filled?"✎":"＋")}</span></div></summary>
+      <div class="form">
+        <label class="fld"><span>Ce qui a avancé</span><textarea oninput="revSet(${i},'avance',this.value)">${esc(r.avance)}</textarea></label>
+        <label class="fld"><span>Ce qui m'a ralenti</span><textarea oninput="revSet(${i},'ralenti',this.value)">${esc(r.ralenti)}</textarea></label>
+        <label class="fld"><span>Ce que je dois arrêter</span><textarea oninput="revSet(${i},'arreter',this.value)">${esc(r.arreter)}</textarea></label>
+        <label class="fld"><span>Priorité semaine prochaine</span><textarea oninput="revSet(${i},'priorite',this.value)">${esc(r.priorite)}</textarea></label>
+        <label class="fld"><span>Note /10</span><input inputmode="numeric" value="${esc(r.note)}" oninput="revSet(${i},'note',this.value)"></label>
+      </div></details>`;
+  }).join("");
+}
+
+/* ---------- RESEAU ---------- */
+let rsFilterVal="Tous";
+function addReseau(){
+  const c={id:"rs"+Date.now(),nom:$('rs_nom').value,met:$('rs_met').value,opp:$('rs_opp').value,act:$('rs_act').value,
+    pri:$('rs_pri').value,sta:$('rs_sta').value,dateAjout:key(new Date()),dernier:key(new Date())};
+  if(!c.nom){alert("Indique au moins un nom.");return;}
+  S.reseau.unshift(c);save();
+  ['rs_nom','rs_met','rs_opp','rs_act'].forEach(i=>$(i).value="");
+  $('rsAdd').open=false;renderReseau();
+}
+function delReseau(id){if(confirm("Supprimer ce contact ?")){S.reseau=S.reseau.filter(c=>c.id!==id);save();renderReseau();}}
+function cycleStatut(id){const order=["Actif","À relancer","En attente","Inactif"];const c=S.reseau.find(x=>x.id===id);
+  c.sta=order[(order.indexOf(c.sta)+1)%order.length];c.dernier=key(new Date());save();renderReseau();}
+function setRsFilter(v){rsFilterVal=v;renderReseau();}
+function renderReseau(){
+  const cats=["Tous","Clé","Important","Secondaire"];
+  $('rsFilter').innerHTML=cats.map(c=>`<button class="toolbtn" style="${rsFilterVal===c?'border-color:var(--gold);color:var(--gold-b)':''}" onclick="setRsFilter('${c}')">${c}${c!=="Tous"?" ("+S.reseau.filter(x=>x.pri===c).length+")":""}</button>`).join("");
+  const list=S.reseau.filter(c=>rsFilterVal==="Tous"||c.pri===rsFilterVal);
+  $('rsList').innerHTML=list.length?list.map(c=>`
+    <div class="item">
+      <button class="del" onclick="delReseau('${c.id}')">✕</button>
+      <h4>${esc(c.nom)}</h4>
+      <div class="meta">
+        <div style="color:var(--gold-b);font-weight:600;margin-bottom:4px">${esc(c.met)}</div>
+        ${esc(c.opp)}
+        <div style="margin-top:7px"><b>Action :</b> ${esc(c.act)}</div>
+        <div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <span class="pill ${cls(c.pri)}">${esc(c.pri)}</span>
+          <span class="pill ${cls(c.sta)}" onclick="cycleStatut('${c.id}')" style="cursor:pointer">${esc(c.sta)} ⟳</span>
         </div>
-        <div style="text-align:right">
-          <div style="font-size:15px;font-weight:800;color:var(--green)">${fmtFCFA(s.price)}</div>
-          <div style="font-size:11px;color:var(--gray)">qté: ${s.quantity}</div>
-        </div>`;
-      row.onclick = () => openReserve(p, {id:s.medicationId,name:s.medicationName,form:s.form,dosage:s.dosage}, s.price);
-      card.appendChild(row);
-    });
-    sl.appendChild(card);
-  } catch(e) { toast('❌ ' + e.message); }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PATIENT — RESERVE
-// ═══════════════════════════════════════════════════════════════════════════
-function openReserve(pharma, med, price) {
-  S.currentPharma = pharma; S.currentMed = med;
-  S.resPrice = price; S.resQty = 1;
-  document.getElementById('res-med-name').textContent = med.name;
-  document.getElementById('res-med-info').textContent = [med.form,med.dosage].filter(Boolean).join(' · ');
-  document.getElementById('res-ph-name').textContent = pharma.name;
-  document.getElementById('res-ph-addr').textContent = pharma.address||'';
-  document.getElementById('res-price').textContent = fmtFCFA(price);
-  document.getElementById('res-qty').textContent = '1';
-  document.querySelectorAll('#payment-methods .tab').forEach(b=>b.classList.remove('active'));
-  document.querySelector('#payment-methods .tab').classList.add('active');
-  S.resPayment = 'WAVE';
-  updateResTotal();
-  goScreen('screen-reserve');
-}
-
-function changeQty(d) {
-  S.resQty = Math.max(1, S.resQty + d);
-  document.getElementById('res-qty').textContent = S.resQty;
-  updateResTotal();
-}
-
-function updateResTotal() {
-  const total = S.resPrice * S.resQty;
-  document.getElementById('res-total').textContent = fmtFCFA(total);
-  document.getElementById('res-total-label').textContent = '= ' + fmtFCFA(total);
-}
-
-function selectPayment(btn, method) {
-  S.resPayment = method;
-  document.querySelectorAll('#payment-methods .tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
-async function confirmReservation() {
-  const btn = document.getElementById('res-btn');
-  btn.textContent = 'Réservation…'; btn.disabled = true;
-  try {
-    const d = await POST('/reservations', {
-      pharmacyId: S.currentPharma.id,
-      medicationId: S.currentMed.id,
-      quantity: S.resQty,
-      _price: S.resPrice,
-    });
-    const resa = d.data;
-    await POST('/payments/initiate', { reservationId:resa.id, method:S.resPayment });
-    // Show success screen
-    document.getElementById('success-ref').textContent = resa.refNumber;
-    document.getElementById('success-details').innerHTML =
-      `<div>💊 <strong>${resa.medicationName}</strong> × ${resa.quantity}</div>
-       <div>🏥 ${resa.pharmacyName}</div>
-       <div>💰 ${fmtFCFA(resa.totalAmount)}</div>
-       <div style="margin-top:8px;font-size:12px;color:var(--green)">⏱ Valable 2 heures · ${S.resPayment==='CASH'?'Paiement sur place':'Paiement '+S.resPayment}</div>`;
-    S.screenStack = [];
-    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-    document.getElementById('screen-success').classList.remove('hidden');
-  } catch(e) {
-    toast('❌ ' + e.message);
-  } finally {
-    btn.textContent = 'Confirmer la réservation'; btn.disabled = false;
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PATIENT — RESERVATIONS
-// ═══════════════════════════════════════════════════════════════════════════
-let resaFilter = '';
-async function loadMyResas(status) {
-  resaFilter = status;
-  const el = document.getElementById('resa-list');
-  el.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
-  try {
-    const url = '/reservations' + (status?'?status='+status:'');
-    const d = await GET(url);
-    const resas = d.data?.reservations || [];
-    el.innerHTML = '';
-    if (!resas.length) {
-      el.innerHTML = '<div class="empty"><div class="emoji">📋</div><p>Aucune réservation' + (status?' dans cette catégorie':'') + '</p></div>';
-      return;
-    }
-    resas.forEach(r => el.appendChild(buildResaCard(r)));
-  } catch(e) { el.innerHTML = `<div class="empty"><div class="emoji">⚠️</div><p>${e.message}</p></div>`; }
-}
-
-function filterResas(btn, status) {
-  document.querySelectorAll('#screen-reservations .tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  loadMyResas(status);
-}
-
-function buildResaCard(r) {
-  const div = document.createElement('div'); div.className = 'resa-card';
-  const statusMap = {CONFIRMED:{lbl:'Confirmée',cls:'badge-green'},READY:{lbl:'Prête ✓',cls:'badge-blue'},COMPLETED:{lbl:'Terminée',cls:'badge-gray'},CANCELLED:{lbl:'Annulée',cls:'badge-red'}};
-  const s = statusMap[r.status]||{lbl:r.status,cls:'badge-gray'};
-  div.innerHTML = `
-    <div class="resa-head">
-      <span class="resa-ref">${r.refNumber}</span>
-      <span class="badge ${s.cls}">${s.lbl}</span>
-    </div>
-    <div class="resa-body">
-      <div class="resa-med">💊 ${r.medicationName}</div>
-      <div class="resa-ph">🏥 ${r.pharmacyName}</div>
-      <div style="font-size:13px;color:var(--gray);margin-top:6px">Qté: ${r.quantity} · ${fmtFCFA(r.totalAmount)}</div>
-      <div style="font-size:12px;color:var(--gray);margin-top:2px">📅 ${fmtDate(r.createdAt)}</div>
-    </div>
-    ${r.status==='READY'?`<div style="margin:0 16px 12px;padding:10px 12px;background:var(--ltgreen);border-radius:var(--radius-sm);font-size:13px;color:var(--dkgreen);display:flex;align-items:center;gap:8px">✅ <strong>Prêt à récupérer !</strong> Rendez-vous à la pharmacie.</div>`:''}
-    ${r.status==='CONFIRMED'||r.status==='READY'?`<div class="resa-footer"><button class="btn btn-outline btn-sm" onclick="cancelResa('${r.id}',this)">Annuler</button></div>`:''}`;
-  return div;
-}
-
-async function cancelResa(id, btn) {
-  if (!confirm('Annuler cette réservation ?')) return;
-  btn.disabled=true; btn.textContent='…';
-  try {
-    await POST('/reservations/'+id+'/cancel');
-    toast('Réservation annulée');
-    loadMyResas(resaFilter);
-  } catch(e) { toast('❌ '+e.message); btn.disabled=false; btn.textContent='Annuler'; }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PHARMACY — DASHBOARD
-// ═══════════════════════════════════════════════════════════════════════════
-async function loadPhDashboard() {
-  try {
-    const [phd, resd] = await Promise.all([GET('/pharmacies/me'), GET('/reservations/pharmacy')]);
-    const ph = phd.data;
-    S.pharmacyId = ph.id;
-    document.getElementById('pdash-phname').textContent = ph.name;
-    document.getElementById('pprofil-phname').textContent = ph.name;
-
-    const resas = resd.data || [];
-    const today = new Date().toDateString();
-    const todayResas = resas.filter(r => new Date(r.createdAt).toDateString()===today);
-    const pending = resas.filter(r => r.status==='CONFIRMED');
-    const completed = resas.filter(r => r.status==='COMPLETED');
-
-    const stockd = await GET('/pharmacies/'+S.pharmacyId+'/stock');
-    const lowStock = (stockd.data||[]).filter(s=>s.isLow);
-
-    document.getElementById('stat-today').textContent = todayResas.length;
-    document.getElementById('stat-pending').textContent = pending.length;
-    document.getElementById('stat-completed').textContent = completed.length;
-    document.getElementById('stat-low').textContent = lowStock.length;
-
-    const el = document.getElementById('pdash-resas'); el.innerHTML = '';
-    const recent = resas.slice(0,5);
-    if (!recent.length) { el.innerHTML='<div class="empty"><div class="emoji">📋</div><p>Aucune réservation pour le moment</p></div>'; return; }
-    recent.forEach(r => el.appendChild(buildPhResaCard(r)));
-  } catch(e) { toast('⚠️ '+e.message); }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PHARMACY — RESERVATIONS
-// ═══════════════════════════════════════════════════════════════════════════
-let phResaFilter = '';
-async function loadPhResas(status) {
-  phResaFilter = status;
-  const el = document.getElementById('presas-list');
-  el.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
-  try {
-    const url = '/reservations/pharmacy'+(status?'?status='+status:'');
-    const d = await GET(url);
-    const resas = d.data || [];
-    S.allPhResas = resas; el.innerHTML = '';
-    if (!resas.length) { el.innerHTML='<div class="empty"><div class="emoji">📋</div><p>Aucune réservation</p></div>'; return; }
-    resas.forEach(r => el.appendChild(buildPhResaCard(r)));
-  } catch(e) { el.innerHTML=`<div class="empty"><div class="emoji">⚠️</div><p>${e.message}</p></div>`; }
-}
-
-function filterPhResas(btn, status) {
-  document.querySelectorAll('#screen-presas .tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  loadPhResas(status);
-}
-
-function buildPhResaCard(r) {
-  const div = document.createElement('div'); div.className='resa-card';
-  const statusMap = {CONFIRMED:{lbl:'Nouvelle',cls:'badge-orange'},READY:{lbl:'Prête',cls:'badge-blue'},COMPLETED:{lbl:'Terminée',cls:'badge-gray'},CANCELLED:{lbl:'Annulée',cls:'badge-red'}};
-  const s = statusMap[r.status]||{lbl:r.status,cls:'badge-gray'};
-  div.innerHTML = `
-    <div class="resa-head">
-      <span class="resa-ref">${r.refNumber}</span>
-      <span class="badge ${s.cls}">${s.lbl}</span>
-    </div>
-    <div class="resa-body">
-      <div class="resa-med">💊 ${r.medicationName} × ${r.quantity}</div>
-      ${r.patientName?`<div class="resa-ph">👤 ${r.patientName}${r.patientPhone?' · '+r.patientPhone:''}</div>`:''}
-      <div style="font-size:13px;color:var(--gray);margin-top:4px">${fmtFCFA(r.totalAmount)} · ${fmtDate(r.createdAt)}</div>
-    </div>
-    ${r.status==='CONFIRMED'?`<div class="resa-footer">
-      <button class="btn btn-primary btn-sm" onclick="markReady('${r.id}',this)">Marquer prête</button>
-      <button class="btn btn-outline btn-sm" onclick="markComplete('${r.id}',this)">Terminer</button>
-    </div>`:''}
-    ${r.status==='READY'?`<div class="resa-footer">
-      <button class="btn btn-primary btn-sm" onclick="markComplete('${r.id}',this)">✓ Remis au patient</button>
-    </div>`:''}`;
-  return div;
-}
-
-async function markReady(id, btn) {
-  btn.disabled=true; btn.textContent='…';
-  try {
-    await POST('/reservations/'+id+'/ready');
-    toast('✅ Réservation marquée prête');
-    loadPhResas(phResaFilter); loadPhDashboard();
-  } catch(e) { toast('❌ '+e.message); btn.disabled=false; btn.textContent='Marquer prête'; }
-}
-
-async function markComplete(id, btn) {
-  btn.disabled=true; btn.textContent='…';
-  try {
-    await POST('/reservations/'+id+'/complete');
-    toast('✅ Réservation terminée');
-    loadPhResas(phResaFilter); loadPhDashboard();
-  } catch(e) { toast('❌ '+e.message); btn.disabled=false; btn.textContent='Terminer'; }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PHARMACY — STOCK
-// ═══════════════════════════════════════════════════════════════════════════
-async function loadStock() {
-  if (!S.pharmacyId) {
-    try { const d=await GET('/pharmacies/me'); S.pharmacyId=d.data.id; } catch(_){}
-  }
-  const el = document.getElementById('stock-list');
-  el.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
-  try {
-    const d = await GET('/pharmacies/'+S.pharmacyId+'/stock');
-    S.allStock = d.data||[];
-    renderStock(S.allStock);
-  } catch(e) { el.innerHTML=`<div class="empty"><div class="emoji">⚠️</div><p>${e.message}</p></div>`; }
-}
-
-function filterStock(q) {
-  const f = S.allStock.filter(s =>
-    s.medicationName.toLowerCase().includes(q.toLowerCase()) ||
-    (s.dosage||'').toLowerCase().includes(q.toLowerCase())
-  );
-  renderStock(f);
-}
-
-function renderStock(items) {
-  const el = document.getElementById('stock-list'); el.innerHTML='';
-  if (!items.length) { el.innerHTML='<div class="empty"><div class="emoji">📦</div><p>Aucun médicament dans le stock</p></div>'; return; }
-  const card = document.createElement('div'); card.className='card'; card.style.margin='12px 16px';
-  items.forEach(s => {
-    const row = document.createElement('div'); row.className='stock-item';
-    const qtyClass = s.quantity===0?'empty':s.isLow?'low':'';
-    row.innerHTML = `<div style="flex:1">
-        <div style="font-size:14px;font-weight:700">${s.medicationName}</div>
-        <div style="font-size:12px;color:var(--gray);margin-top:1px">${s.form||''} ${s.dosage||''}</div>
-        <div style="font-size:12px;color:var(--gray)">${fmtFCFA(s.price)}</div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-right:8px">
-        ${s.isLow&&s.quantity>0?'<span class="badge badge-orange" style="font-size:11px">⚠️ Bas</span>':''}
-        ${s.quantity===0?'<span class="badge badge-red" style="font-size:11px">Rupture</span>':''}
+    </div>`).join(""):'<div class="empty">Aucun contact dans ce filtre.</div>';
+}
+
+/* ---------- IDEES ---------- */
+function addIdee(){
+  const o={id:"id"+Date.now(),idee:$('id_idee').value,pb:$('id_pb').value,sol:$('id_sol').value,pq:$('id_pq').value,
+    ac:$('id_ac').value,pri:$('id_pri').value,sta:$('id_sta').value};
+  if(!o.idee){alert("Donne un nom à ton idée.");return;}
+  S.idees.unshift(o);save();['id_idee','id_pb','id_sol','id_pq','id_ac'].forEach(i=>$(i).value="");
+  $('idAdd').open=false;renderIdees();
+}
+function delIdee(id){if(confirm("Supprimer cette idée ?")){S.idees=S.idees.filter(x=>x.id!==id);save();renderIdees();}}
+function renderIdees(){
+  $('idList').innerHTML=S.idees.length?S.idees.map(o=>`
+    <div class="item">
+      <button class="del" onclick="delIdee('${o.id}')">✕</button>
+      <h4>${esc(o.idee)}</h4>
+      <div class="meta">
+        ${o.pb?`<div><b>Problème :</b> ${esc(o.pb)}</div>`:""}
+        ${o.sol?`<div style="margin-top:3px"><b>Solution :</b> ${esc(o.sol)}</div>`:""}
+        ${o.pq?`<div style="margin-top:3px"><b>Pourquoi :</b> ${esc(o.pq)}</div>`:""}
+        ${o.ac?`<div style="margin-top:3px"><b>1ère action :</b> ${esc(o.ac)}</div>`:""}
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="pill ${cls(o.pri)}">${esc(o.pri)}</span>
+          <span class="pill ${cls(o.sta)}">${esc(o.sta)}</span>
+        </div>
       </div>
-      <div class="stock-qty ${qtyClass}">${s.quantity}</div>
-      <button onclick='openStockModal(${JSON.stringify(s)})' style="width:34px;height:34px;border-radius:50%;border:1px solid var(--mgray);background:var(--white);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">✏️</button>`;
-    card.appendChild(row);
-  });
-  el.appendChild(card);
+    </div>`).join(""):'<div class="empty">Aucune idée enregistrée. Note la prochaine qui te vient.</div>';
 }
 
-let editingStock = null;
-function openStockModal(s) {
-  editingStock = s;
-  document.getElementById('modal-med-name').textContent = s.medicationName;
-  document.getElementById('modal-med-info').textContent = [s.form,s.dosage].filter(Boolean).join(' · ');
-  document.getElementById('modal-qty').value = s.quantity;
-  document.getElementById('modal-price').value = s.price;
-  document.getElementById('modal-threshold').value = s.threshold||5;
-  document.getElementById('modal-stock').style.display='flex';
+/* ---------- ERREURS ---------- */
+function addErreur(){
+  const o={id:"er"+Date.now(),date:$('er_date').value||key(new Date()),err:$('er_err').value,pq:$('er_pq').value,
+    ev:$('er_ev').value,le:$('er_le').value,cat:$('er_cat').value};
+  if(!o.err){alert("Décris l'erreur.");return;}
+  S.erreurs.unshift(o);save();['er_err','er_pq','er_ev','er_le'].forEach(i=>$(i).value="");
+  $('erAdd').open=false;renderErreurs();
 }
-function closeStockModal() { document.getElementById('modal-stock').style.display='none'; }
-
-async function saveStock() {
-  const qty = parseInt(document.getElementById('modal-qty').value);
-  const price = parseFloat(document.getElementById('modal-price').value);
-  const threshold = parseInt(document.getElementById('modal-threshold').value)||5;
-  if (isNaN(qty)||isNaN(price)) { toast('Remplissez tous les champs'); return; }
-  try {
-    await PUT('/pharmacies/'+S.pharmacyId+'/stock/'+editingStock.medicationId, {quantity:qty,price,threshold});
-    toast('✅ Stock mis à jour');
-    closeStockModal(); loadStock();
-  } catch(e) { toast('❌ '+e.message); }
-}
-
-function openAddStockModal() {
-  const stockedIds = new Set(S.allStock.map(s=>s.medicationId));
-  const available = MOCK_MEDS.filter(m=>!stockedIds.has(m.id));
-  const sel = document.getElementById('add-stock-med');
-  sel.innerHTML = '';
-  if (!available.length) { toast('Tous les médicaments sont déjà dans votre stock'); return; }
-  available.forEach(m => {
-    const opt = document.createElement('option');
-    opt.value=m.id; opt.textContent=m.name+' ('+m.form+' '+m.dosage+')';
-    sel.appendChild(opt);
-  });
-  document.getElementById('add-stock-qty').value='';
-  document.getElementById('add-stock-price').value='';
-  document.getElementById('modal-add-stock').style.display='flex';
-}
-function closeAddStockModal() { document.getElementById('modal-add-stock').style.display='none'; }
-
-async function addNewStock() {
-  const medId = document.getElementById('add-stock-med').value;
-  const qty = parseInt(document.getElementById('add-stock-qty').value);
-  const price = parseFloat(document.getElementById('add-stock-price').value);
-  if (isNaN(qty)||isNaN(price)||qty<0||price<=0) { toast('Quantité et prix requis'); return; }
-  try {
-    await POST('/pharmacies/'+S.pharmacyId+'/stock', {medicationId:medId, quantity:qty, price, threshold:5});
-    toast('✅ Médicament ajouté au stock');
-    closeAddStockModal(); loadStock();
-  } catch(e) { toast('❌ '+e.message); }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════════════════════════════════════════
-function buildPhCard(p) {
-  const div = document.createElement('div'); div.className='ph-card';
-  div.innerHTML = `
-    <div class="ph-card-head">
-      <div class="ph-icon">🏥</div>
-      <div style="flex:1">
-        <div style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px">${p.name}${p.isGuard?'<span class="guard-badge">🌙 Garde</span>':''}</div>
-        <div style="font-size:12px;color:var(--gray);margin-top:2px">${p.address||''}</div>
+function delErreur(id){if(confirm("Supprimer ?")){S.erreurs=S.erreurs.filter(x=>x.id!==id);save();renderErreurs();}}
+function renderErreurs(){
+  $('erList').innerHTML=S.erreurs.length?S.erreurs.map(o=>`
+    <div class="item">
+      <button class="del" onclick="delErreur('${o.id}')">✕</button>
+      <h4>${fdate(o.date)} — ${esc(o.err)}</h4>
+      <div class="meta">
+        ${o.pq?`<div><b>Pourquoi :</b> ${esc(o.pq)}</div>`:""}
+        ${o.ev?`<div style="margin-top:3px"><b>Éviter :</b> ${esc(o.ev)}</div>`:""}
+        ${o.le?`<div style="margin-top:3px;color:var(--gold-b)"><b>Leçon :</b> ${esc(o.le)}</div>`:""}
+        <div style="margin-top:8px"><span class="pill secondaire">${esc(o.cat)}</span></div>
       </div>
-      ${p.rating?`<span style="font-size:13px;color:#F57C00;font-weight:700">★ ${p.rating}</span>`:''}
-    </div>
-    <div class="ph-card-body">
-      <div class="ph-info-row">
-        ${p.openingHours?'⏰ '+p.openingHours:''}
-        ${p.distance?`<span style="margin-left:auto;color:var(--green);font-weight:600">📍 ${p.distance}</span>`:''}
-      </div>
-    </div>
-    <div class="ph-actions">
-      <button class="btn btn-primary btn-sm" onclick='openPharmacy("${p.id}")'>Voir le stock</button>
-    </div>`;
-  return div;
+    </div>`).join(""):'<div class="empty">Aucune erreur notée.</div>';
 }
 
-function fmtFCFA(n) { return new Intl.NumberFormat('fr-SN').format(Math.round(n))+' FCFA'; }
-function fmtDate(d) {
-  if (!d) return '—';
-  return new Intl.DateTimeFormat('fr-SN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(d));
+/* ---------- VISION & RAPPELS ---------- */
+function renderVision(){
+  $('vQui').innerHTML=S.vision.map(v=>`<li>${esc(v)}</li>`).join("");
+  $('vReg').innerHTML=S.regles.map(v=>`<li>${esc(v)}</li>`).join("");
+}
+function renderRappels(){
+  const row=(t,x,f)=>`<div class="rrow"><div class="rtime">${esc(t)}</div><div class="rtxt">${esc(x)}</div>${f?`<div class="rfreq">${esc(f)}</div>`:""}</div>`;
+  $('rapMat').innerHTML=S.rappels.matin.map(r=>row(r[0],r[1])).join("");
+  $('rapSoir').innerHTML=S.rappels.soir.map(r=>row(r[0],r[1])).join("");
+  $('rapHebdo').innerHTML=S.rappels.hebdo.map(r=>row(r[0],r[1],r[2])).join("");
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════════════════════
-(async () => {
-  loadCategories();
-  const savedToken = localStorage.getItem('medoq_token');
-  const savedUser  = localStorage.getItem('medoq_user');
-  if (savedToken && savedUser) {
-    S.token = savedToken;
-    S.user  = JSON.parse(savedUser);
-    S.pharmacyId = localStorage.getItem('medoq_phid') || null;
-    try {
-      await GET('/auth/me');
-      if (S.user.role==='PHARMACY_STAFF') enterPharmacyMode();
-      else enterPatientMode();
-    } catch(_) { doLogout(); }
-  }
-})();
+/* ---------- IMPORT / EXPORT ---------- */
+function exportData(){
+  const blob=new Blob([JSON.stringify(S,null,1)],{type:"application/json"});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download="pilotage_amadou_"+key(new Date())+".json";a.click();
+}
+function importData(input){
+  const f=input.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(confirm("Importer cette sauvegarde ? Tes données actuelles seront remplacées.")){S=d;for(const k in SEED){if(S[k]===undefined)S[k]=SEED[k];}save();initWeek();renderAll();alert("Sauvegarde importée ✓");}}catch(e){alert("Fichier illisible.");}};
+  r.readAsText(f);input.value="";
+}
+
+/* ---------- INIT ---------- */
+function renderAll(){renderDash();renderJournal();renderHabits();renderObj();renderRevue();renderReseau();renderIdees();renderErreurs();renderVision();renderRappels();}
+function start(){
+  load();initWeek();buildTabs();
+  $('today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  $('j_date').value=key(new Date());$('er_date').value=key(new Date());
+  renderAll();
+}
+start();
 </script>
 </body>
 </html>
