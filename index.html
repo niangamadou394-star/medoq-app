@@ -150,6 +150,11 @@ details.add[open] .addbtn{border-style:solid;background:var(--panel2)}
 .form{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:10px}
 .toolbtn{font-size:11px;color:var(--txt3);background:none;border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer;font-family:var(--body)}
 .toolrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
+
+/* Toast */
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);z-index:200;background:var(--panel2);border:1px solid var(--gold-dim);color:var(--txt);font-family:var(--body);font-size:14px;font-weight:600;padding:12px 20px;border-radius:14px;transition:transform .35s cubic-bezier(.4,0,.2,1);white-space:nowrap;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast .ti{color:var(--gold-b);margin-right:6px}
 </style>
 </head>
 <body>
@@ -182,6 +187,15 @@ details.add[open] .addbtn{border-style:solid;background:var(--panel2)}
   <div class="metrics">
     <div class="metric"><div class="v" id="mRev" style="color:var(--green)">—</div><div class="l">Revenus cumulés (€)</div></div>
     <div class="metric"><div class="v" id="mDep" style="color:var(--red)">—</div><div class="l">Dépenses cumulées (€)</div></div>
+  </div>
+  <div class="panel">
+    <div class="plabel">Rapport hebdo par email</div>
+    <p class="hint">Chaque lundi à l'ouverture de l'app, le rapport de la semaine passée t'est envoyé automatiquement, puis les habitudes se réinitialisent.</p>
+    <label class="fld"><span>Ton adresse email</span><input type="email" id="emailCfg" placeholder="toi@gmail.com" oninput="saveEmailCfg()"></label>
+    <div class="btnrow" style="margin-top:4px">
+      <button class="btn ghost sm" onclick="sendTestReport()">Envoyer un rapport test</button>
+    </div>
+    <p class="hint" style="margin-top:8px">⚠️ La première fois, FormSubmit envoie un email de confirmation à cliquer. Après, tout est automatique.</p>
   </div>
   <div class="panel">
     <div class="plabel">Données & sauvegarde</div>
@@ -358,6 +372,7 @@ details.add[open] .addbtn{border-style:solid;background:var(--panel2)}
 
 <nav class="tabs"><div class="tabscroll" id="tabscroll"></div></nav>
 
+<div id="toast"><span class="ti">✉</span><span id="toastMsg"></span></div>
 <div class="foot">Système de pilotage personnel · données stockées sur cet appareil</div>
 
 <script>
@@ -447,11 +462,9 @@ const fdate=s=>{if(!s)return"";const d=new Date(s+"T00:00");return d.toLocaleDat
 function mondayOf(d){const x=new Date(d);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);x.setHours(0,0,0,0);return x;}
 function key(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}
 let curWeek=mondayOf(new Date());
-// if current week empty but seed week exists, start on the most recent week that has data
+// Always start on current week (auto-reset). Old weeks accessible via ‹ navigation.
 function initWeek(){
-  const keys=Object.keys(S.habits||{}).sort();
-  const ck=key(curWeek);
-  if(!(S.habits&&S.habits[ck]) && keys.length){curWeek=mondayOf(new Date(keys[keys.length-1]+"T00:00"));}
+  curWeek=mondayOf(new Date());
 }
 function weekGrid(k){
   if(!S.habits)S.habits={};
@@ -710,6 +723,100 @@ function renderRappels(){
   $('rapHebdo').innerHTML=S.rappels.hebdo.map(r=>row(r[0],r[1],r[2])).join("");
 }
 
+/* ---------- EMAIL CONFIG ---------- */
+function saveEmailCfg(){S.emailCfg=$('emailCfg').value.trim();save();}
+function loadEmailCfg(){if($('emailCfg'))$('emailCfg').value=S.emailCfg||"";}
+
+/* ---------- TOAST ---------- */
+let toastT;
+function toast(msg,dur=3500){
+  $('toastMsg').textContent=msg;
+  const el=$('toast');el.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),dur);
+}
+
+/* ---------- WEEKLY REPORT ---------- */
+function buildReport(weekKey){
+  const g=S.habits[weekKey];
+  if(!g)return null;
+  const wn=Math.round((mondayOf(new Date(weekKey+"T00:00"))-mondayOf(new Date(2025,11,29)))/(7*864e5))+1;
+  const sem="S"+("0"+wn).slice(-2);
+  const stats=S.habitNames.map((name,i)=>{
+    const row=g[i]||[];
+    const done=row.filter(v=>v==="y").length;
+    const tried=row.filter(v=>v!=="").length;
+    return{name,done,tried,pct:tried?Math.round(done/tried*100):0};
+  });
+  const totalDone=stats.reduce((a,h)=>a+h.done,0);
+  const maxC=S.habitNames.length*7;
+  const pctGlobal=Math.round(totalDone/maxC*100);
+  const forts=stats.filter(h=>h.pct>=80);
+  const attention=stats.filter(h=>h.pct>0&&h.pct<50);
+  const vigilance=stats.filter(h=>h.done===0);
+  let body=`RAPPORT HABITUDES — ${sem}\n`;
+  body+=`Score global : ${totalDone} / ${maxC} (${pctGlobal} %)\n\n`;
+  body+="RÉSULTATS PAR HABITUDE :\n";
+  stats.forEach(h=>{
+    const b="█".repeat(Math.round(h.pct/10))+"░".repeat(10-Math.round(h.pct/10));
+    body+=`• ${h.name} : ${h.done}/7 — ${h.pct}% ${b}\n`;
+  });
+  if(forts.length){body+="\n✅ POINTS FORTS (≥80%) :\n";forts.forEach(h=>body+=`• ${h.name} — ${h.pct}%\n`);}
+  if(attention.length){body+="\n⚠️ POINTS D'ATTENTION (< 50%) :\n";attention.forEach(h=>body+=`• ${h.name} — seulement ${h.pct}% de réussite. À renforcer cette semaine.\n`);}
+  if(vigilance.length){body+="\n🔴 POINTS DE VIGILANCE (0%) :\n";vigilance.forEach(h=>body+=`• ${h.name} — aucun jour réalisé. Priorité absolue.\n`);}
+  body+="\n— Système de pilotage Amadou Niang";
+  return{sem,pctGlobal,body};
+}
+
+async function sendReport(weekKey,email){
+  const r=buildReport(weekKey);if(!r)return false;
+  try{
+    const res=await fetch("https://formsubmit.co/ajax/"+encodeURIComponent(email),{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify({
+        _subject:"Rapport Habitudes "+r.sem+" — "+r.pctGlobal+" %",
+        message:r.body,
+        _captcha:"false",
+        _template:"box"
+      })
+    });
+    return res.ok;
+  }catch(e){return false;}
+}
+
+async function sendTestReport(){
+  const email=(S.emailCfg||"").trim();
+  if(!email){alert("Entre d'abord ton adresse email ci-dessus.");return;}
+  const keys=Object.keys(S.habits||{}).sort();
+  const weekKey=keys[keys.length-1]||key(curWeek);
+  toast("Envoi en cours…",8000);
+  const ok=await sendReport(weekKey,email);
+  toast(ok?"Rapport envoyé ! Vérifie ta boîte mail.":"Erreur d'envoi. Vérifie ton adresse.");
+}
+
+async function checkWeeklyReport(){
+  const email=(S.emailCfg||"").trim();
+  const today=new Date();
+  const currentWeekKey=key(mondayOf(today));
+  // Find most recent completed week (strictly before current week)
+  const pastKeys=Object.keys(S.habits||{}).filter(k=>k<currentWeekKey).sort();
+  if(!pastKeys.length)return;
+  const lastWeekKey=pastKeys[pastKeys.length-1];
+  // Already sent?
+  if(!S.reportsSent)S.reportsSent=[];
+  if(S.reportsSent.includes(lastWeekKey))return;
+  // Auto-reset: navigate to current week
+  curWeek=mondayOf(today);
+  // Send if email configured
+  if(email){
+    toast("Envoi du rapport "+lastWeekKey.slice(0,7)+"…",6000);
+    const ok=await sendReport(lastWeekKey,email);
+    toast(ok?"Rapport semaine précédente envoyé ! Nouvelle semaine démarrée.":"Rapport non envoyé (vérifie email). Nouvelle semaine démarrée.",5000);
+  }
+  // Mark sent regardless (avoid re-prompting)
+  S.reportsSent.push(lastWeekKey);save();
+}
+
 /* ---------- IMPORT / EXPORT ---------- */
 function exportData(){
   const blob=new Blob([JSON.stringify(S,null,1)],{type:"application/json"});
@@ -724,11 +831,14 @@ function importData(input){
 
 /* ---------- INIT ---------- */
 function renderAll(){renderDash();renderJournal();renderHabits();renderObj();renderRevue();renderReseau();renderIdees();renderErreurs();renderVision();renderRappels();}
-function start(){
+async function start(){
   load();initWeek();buildTabs();
   $('today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   $('j_date').value=key(new Date());$('er_date').value=key(new Date());
   renderAll();
+  loadEmailCfg();
+  await checkWeeklyReport();
+  renderHabits();
 }
 start();
 </script>
