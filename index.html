@@ -864,18 +864,22 @@ async function registerSW(){
   }catch(e){console.warn('SW:',e);}
 }
 
+function isIOS(){return /ipad|iphone|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
+function isPWA(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}
+
 async function enableNotifications(){
   if(!('Notification' in window)){
-    toast("Notifications non supportées sur ce navigateur.");return;
+    // iOS Safari hors PWA : guider vers l'installation
+    renderNotifStatus();return;
   }
   const perm=await Notification.requestPermission();
   if(perm==='granted'){
     S.notifEnabled=true;save();
     await registerSW();
-    toast("Notifications activées ! Tu recevras tes rappels automatiquement.");
+    toast("Notifications activées ! Tes rappels arriveront automatiquement.");
     renderNotifStatus();
   }else{
-    toast("Notifications bloquées. Active-les dans Réglages > Navigateur.");
+    toast("Notifications refusées. Va dans Réglages de ton téléphone pour les activer.");
     renderNotifStatus();
   }
 }
@@ -883,24 +887,38 @@ async function enableNotifications(){
 function renderNotifStatus(){
   const btn=$('notifBtn');const hint=$('notifHint');
   if(!btn)return;
+  // Cas 1 : Notification API absente → iOS Safari sans PWA installée
   if(!('Notification' in window)){
-    btn.textContent='Non supporté';btn.disabled=true;return;
+    btn.textContent='Installer l\'app d\'abord';
+    btn.style.background='var(--amber-bg)';btn.style.color='var(--amber)';btn.style.border='1px solid #44380f';
+    btn.onclick=()=>{
+      if(hint)hint.innerHTML='<b>Sur iPhone :</b> Appuie sur l\'icône Partager (↑) dans Safari → "Sur l\'écran d\'accueil" → Ajouter. Puis ouvre l\'app depuis l\'écran d\'accueil et reviens ici.';
+    };
+    if(hint&&!hint.textContent)hint.innerHTML='<b>iPhone :</b> Safari → Partager (↑) → "Sur l\'écran d\'accueil". Puis ouvre depuis l\'écran d\'accueil.';
+    return;
   }
+  // Cas 2 : déjà accordé et activé
   if(Notification.permission==='granted'&&S.notifEnabled){
     btn.textContent='Notifications actives ✓';
-    btn.style.background='var(--green-bg)';
-    btn.style.color='var(--green)';
-    btn.style.border='1px solid #2c4527';
-    if(hint)hint.textContent='Tu recevras tes rappels automatiquement. Pour les notifications en arrière-plan : installe l\'app sur ton écran d\'accueil.';
-  }else if(Notification.permission==='denied'){
-    btn.textContent='Notifications bloquées';
-    btn.style.background='var(--red-bg)';btn.style.color='var(--red)';
-    if(hint)hint.textContent='Active-les dans : Réglages → Safari/Chrome → Notifications';
-  }else{
-    btn.textContent='Activer les notifications';
-    btn.style.background='';btn.style.color='';btn.style.border='';
-    if(hint)hint.textContent='';
+    btn.style.background='var(--green-bg)';btn.style.color='var(--green)';btn.style.border='1px solid #2c4527';
+    btn.onclick=null;
+    if(hint)hint.textContent='Rappels actifs. Pour les recevoir app fermée, installe-la sur l\'écran d\'accueil.';
+    return;
   }
+  // Cas 3 : refusées
+  if(Notification.permission==='denied'){
+    btn.textContent='Notifications bloquées — débloquer';
+    btn.style.background='var(--red-bg)';btn.style.color='var(--red)';btn.style.border='1px solid #44241f';
+    btn.onclick=()=>{
+      if(hint)hint.innerHTML='<b>iPhone :</b> Réglages → Safari → Notifications → Autorisées.<br><b>Android :</b> Réglages → Apps → Chrome → Notifications → Activer.';
+    };
+    return;
+  }
+  // Cas 4 : pas encore demandé
+  btn.textContent='Activer les notifications';
+  btn.style.background='';btn.style.color='';btn.style.border='';
+  btn.onclick=enableNotifications;
+  if(hint)hint.textContent='';
 }
 
 /* ---------- IMPORT / EXPORT ---------- */
