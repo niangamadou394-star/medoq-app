@@ -354,6 +354,12 @@ details.add[open] .addbtn{border-style:solid;background:var(--panel2)}
 <!-- RAPPELS -->
 <section id="rappels">
   <div class="sechead">Rappels <em>& routines</em></div>
+  <div class="panel gold" style="margin-bottom:14px">
+    <div class="plabel">Notifications téléphone</div>
+    <p class="hint">Reçois une notification à chaque heure de rappel, même app fermée. Installe l'app sur l'écran d'accueil pour les notifications en arrière-plan.</p>
+    <button class="btn sm" id="notifBtn" onclick="enableNotifications()" style="margin-bottom:8px">Activer les notifications</button>
+    <p class="hint" id="notifHint" style="margin-top:4px"></p>
+  </div>
   <div class="panel">
     <div class="plabel">Routine matinale</div>
     <div id="rapMat"></div>
@@ -817,6 +823,86 @@ async function checkWeeklyReport(){
   S.reportsSent.push(lastWeekKey);save();
 }
 
+/* ---------- NOTIFICATIONS & SERVICE WORKER ---------- */
+const DAY_MAP={Lundi:1,Mardi:2,Mercredi:3,Jeudi:4,Vendredi:5,Samedi:6,Dimanche:0};
+const ALL_DAYS=[0,1,2,3,4,5,6];
+
+function parseTime(t){
+  // "06h00" or "09h00+" → "06:00"
+  const m=t.replace('+','').match(/(\d{2})h(\d{2})/);
+  return m?m[1]+':'+m[2]:null;
+}
+
+function buildSchedule(){
+  const s=[];
+  S.rappels.matin.forEach((r,i)=>{
+    const t=parseTime(r[0]);if(!t)return;
+    s.push({id:'mat'+i,time:t,days:ALL_DAYS,title:'🌅 Routine matinale',body:r[1]});
+  });
+  S.rappels.soir.forEach((r,i)=>{
+    const t=parseTime(r[0]);if(!t)return;
+    s.push({id:'soir'+i,time:t,days:ALL_DAYS,title:'🌙 Routine du soir',body:r[1]});
+  });
+  S.rappels.hebdo.forEach((r,i)=>{
+    const day=DAY_MAP[r[0]];
+    if(day===undefined)return;
+    const label=r[2]==='Mensuel'?'📅 Rappel mensuel':'📋 Rappel hebdomadaire';
+    s.push({id:'hebdo'+i,time:'09:00',days:[day],title:label,body:r[1]});
+  });
+  return s;
+}
+
+let swReg=null;
+
+async function registerSW(){
+  if(!('serviceWorker' in navigator))return;
+  try{
+    swReg=await navigator.serviceWorker.register('./sw.js',{scope:'./'});
+    const reg=await navigator.serviceWorker.ready;
+    const active=reg.active;
+    if(active)active.postMessage({type:'SET_SCHEDULE',schedule:buildSchedule()});
+  }catch(e){console.warn('SW:',e);}
+}
+
+async function enableNotifications(){
+  if(!('Notification' in window)){
+    toast("Notifications non supportées sur ce navigateur.");return;
+  }
+  const perm=await Notification.requestPermission();
+  if(perm==='granted'){
+    S.notifEnabled=true;save();
+    await registerSW();
+    toast("Notifications activées ! Tu recevras tes rappels automatiquement.");
+    renderNotifStatus();
+  }else{
+    toast("Notifications bloquées. Active-les dans Réglages > Navigateur.");
+    renderNotifStatus();
+  }
+}
+
+function renderNotifStatus(){
+  const btn=$('notifBtn');const hint=$('notifHint');
+  if(!btn)return;
+  if(!('Notification' in window)){
+    btn.textContent='Non supporté';btn.disabled=true;return;
+  }
+  if(Notification.permission==='granted'&&S.notifEnabled){
+    btn.textContent='Notifications actives ✓';
+    btn.style.background='var(--green-bg)';
+    btn.style.color='var(--green)';
+    btn.style.border='1px solid #2c4527';
+    if(hint)hint.textContent='Tu recevras tes rappels automatiquement. Pour les notifications en arrière-plan : installe l\'app sur ton écran d\'accueil.';
+  }else if(Notification.permission==='denied'){
+    btn.textContent='Notifications bloquées';
+    btn.style.background='var(--red-bg)';btn.style.color='var(--red)';
+    if(hint)hint.textContent='Active-les dans : Réglages → Safari/Chrome → Notifications';
+  }else{
+    btn.textContent='Activer les notifications';
+    btn.style.background='';btn.style.color='';btn.style.border='';
+    if(hint)hint.textContent='';
+  }
+}
+
 /* ---------- IMPORT / EXPORT ---------- */
 function exportData(){
   const blob=new Blob([JSON.stringify(S,null,1)],{type:"application/json"});
@@ -837,6 +923,10 @@ async function start(){
   $('j_date').value=key(new Date());$('er_date').value=key(new Date());
   renderAll();
   loadEmailCfg();
+  renderNotifStatus();
+  if(S.notifEnabled&&typeof Notification!=='undefined'&&Notification.permission==='granted'){
+    registerSW();
+  }
   await checkWeeklyReport();
   renderHabits();
 }
