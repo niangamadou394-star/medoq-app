@@ -1,13 +1,13 @@
 {
-  "name": "Pilotage — Amadou Niang",
-  "short_name": "Pilotage",
-  "description": "Système de pilotage personnel",
+  "name": "CAP 2030 — Amadou Niang",
+  "short_name": "CAP 2030",
+  "description": "Tableau de bord personnel — discipline, cap et projets.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#080c18",
+  "theme_color": "#080c18",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
