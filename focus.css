@@ -13,6 +13,7 @@
 .tring .lab{font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;
   color:var(--tx-3);font-weight:700}
 .tring.run .time{color:var(--teal)}
+.tring.run{cursor:pointer}   /* touche l'anneau pour revenir au plein écran */
 
 .durs{display:flex;gap:var(--s2);width:100%}
 .durs button{flex:1;min-height:46px;border-radius:var(--r);background:var(--surface-2);

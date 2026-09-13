@@ -267,10 +267,14 @@ function goTo(p) {
   if (p === "focus") renderFocus();
   window.scrollTo(0, 0);
 }
+var PAGES = ["jour", "focus", "semaine", "cap", "projets"];
 function bindNav() {
   document.querySelectorAll("nav button").forEach(function (b) {
     b.onclick = function () { hapt(); goTo(b.dataset.p); };
   });
+  /* raccourcis du manifeste : index.html#focus */
+  var h = (location.hash || "").replace("#", "");
+  if (PAGES.indexOf(h) > -1) goTo(h);
 }
 
 /* ─────────── DONNÉES ─────────── */

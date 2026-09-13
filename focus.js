@@ -266,6 +266,8 @@ function bindTimer() {
   $("zPause").onclick = function () { pauseTimer(); $("zPause").textContent = S.timer && S.timer.paused ? "Reprendre" : "Pause"; };
   $("zStop").onclick = function () { stopTimer(); };
   $("zMin").onclick = function () { $("zen").classList.remove("on"); };
+  /* rouvrir le plein écran en touchant l'anneau, session en cours */
+  $("tring").onclick = function () { if (S.timer) { hapt(); $("zen").classList.add("on"); } };
 
   /* une session lancée survit au rechargement */
   if (S.timer) {
