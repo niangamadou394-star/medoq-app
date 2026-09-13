@@ -69,7 +69,7 @@ function agg() {
     if (d.lect) a.lect++;
     if (d.sport) a.sport++;
     if (d.rlz) a.rlz++;
-    if (d.scr != null && d.scr <= (S.cfg.scrTarget || 120)) a.scrOk++;
+    if (scrHeld(d)) a.scrOk++;
     if (d.nophone) a.noph++;
   }
   return a;

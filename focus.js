@@ -7,8 +7,8 @@
 var SCR_STEPS = [30, 60, 90, 120, 180, 240, 300];
 
 function setScreen(min) {
-  T.scr = (T.scr === min) ? null : min;
-  if (T.scr === null) delete T.scr;
+  if (T.scr === min) { delete T.scr; delete T.scrT; }
+  else { T.scr = min; T.scrT = S.cfg.scrTarget || 120; }   // fige le plafond du jour
   hapt(); save(); renderScreen(); renderDay();
 }
 
@@ -51,8 +51,8 @@ function renderScreen() {
   var maxV = tgt * 2;
   for (var i = 0; i < 7; i++) {
     var d = new Date(MON); d.setDate(MON.getDate() + i);
-    var k = ymd(d), dv = (S.days[k] || {}).scr;
-    var cls = dv == null ? "none" : dv <= tgt ? "good" : "over";
+    var k = ymd(d), day = S.days[k] || {}, dv = day.scr;
+    var cls = dv == null ? "none" : scrHeld(day) ? "good" : "over";
     var c = el("div", "c " + cls + (k === TODAY ? " today" : ""));
     var bar = el("i");
     bar.style.height = dv == null ? "3px" : Math.max(4, Math.min(100, dv / maxV * 100)) + "%";

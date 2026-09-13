@@ -128,9 +128,16 @@ var DW_TARGET = 60;   // minutes de travail de fond visées
 var DW_PTS = 25;
 var SCR_PTS = 20;     // points liés au temps d'écran
 
+/* Le plafond retenu est celui en vigueur le jour du relevé : baisser son
+   objectif aujourd'hui ne doit pas casser une série déjà acquise. */
+function scrTargetOf(d) {
+  return (d && d.scrT != null) ? d.scrT : (S.cfg.scrTarget || 120);
+}
+function scrHeld(d) { return d && d.scr != null && d.scr <= scrTargetOf(d); }
+
 function scrPts(d) {
   if (d.scr == null) return 0;                       // non renseigné : pas de points
-  var tgt = S.cfg.scrTarget || 120;
+  var tgt = scrTargetOf(d);
   if (d.scr <= tgt) return SCR_PTS;
   var over = (d.scr - tgt) / tgt;                    // 0 → 1 sur le double de l'objectif
   return Math.max(0, Math.round(SCR_PTS * (1 - over)));
@@ -231,7 +238,7 @@ function streak(test) {
 }
 var stFajr    = function () { return streak(function (v) { return !!v.fajr; }); };
 var stLect    = function () { return streak(function (v) { return !!v.lect; }); };
-var stScreen  = function () { return streak(function (v) { return v.scr != null && v.scr <= (S.cfg.scrTarget || 120); }); };
+var stScreen  = function () { return streak(scrHeld); };
 var stNoPhone = function () { return streak(function (v) { return !!v.nophone; }); };
 
 /* ─────────── SEMAINE ─────────── */
@@ -254,7 +261,7 @@ function renderWeek() {
       var k = ymd(d), v = S.days[k] || {};
       var fut = d > NOW && k !== TODAY;
       var on = r.k === "dw"  ? (v.dw || 0) >= DW_TARGET
-             : r.k === "scr" ? (v.scr != null && v.scr <= (S.cfg.scrTarget || 120))
+             : r.k === "scr" ? scrHeld(v)
              : !!v[r.k];
       var skip = r.gym && GYM.indexOf(d.getDay()) === -1;
       var c = skip ? "dot fut"
