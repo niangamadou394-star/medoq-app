@@ -1,0 +1,107 @@
+/* ═══════════════════════════════════════════════════════
+   CAP 2030 — module Focus & temps d'écran
+   ═══════════════════════════════════════════════════════ */
+
+/* ─────────── MINUTEUR ─────────── */
+.timer{display:flex;flex-direction:column;align-items:center;gap:var(--s5);padding:var(--s2) 0}
+.tring{position:relative;width:228px;height:228px}
+.tring svg{display:block;transform:rotate(-90deg)}
+.tring .face{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:var(--s1)}
+.tring .time{font-size:52px;font-weight:250;letter-spacing:-.04em;line-height:1;
+  font-variant-numeric:tabular-nums}
+.tring .lab{font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--tx-3);font-weight:700}
+.tring.run .time{color:var(--teal)}
+
+.durs{display:flex;gap:var(--s2);width:100%}
+.durs button{flex:1;min-height:46px;border-radius:var(--r);background:var(--surface-2);
+  border:1.5px solid var(--border);font-size:13.5px;font-weight:640;color:var(--tx-2);
+  transition:all var(--fast)}
+.durs button:active{transform:scale(.95)}
+.durs button.on{background:var(--teal-dim);border-color:var(--teal);color:var(--teal)}
+.tbtns{display:flex;gap:var(--s2);width:100%}
+.tbtns .btn{flex:1}
+
+/* plein écran pendant une session */
+#zen{position:fixed;inset:0;z-index:100;background:var(--bg);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:var(--s6);padding:var(--s6);padding-top:calc(var(--s6) + var(--sat))}
+#zen.on{display:flex;animation:zin .4s var(--ease)}
+@keyframes zin{from{opacity:0}to{opacity:1}}
+#zen .big{font-size:76px;font-weight:180;letter-spacing:-.05em;line-height:1;
+  font-variant-numeric:tabular-nums;color:var(--teal)}
+#zen .task{font-size:16px;color:var(--tx-2);text-align:center;max-width:340px;line-height:1.5}
+#zen .sub{font-size:12.5px;color:var(--tx-3);text-align:center;letter-spacing:.02em}
+#zen .acts{display:flex;gap:var(--s3);width:100%;max-width:340px}
+#zen .acts .btn{flex:1}
+.breathe{width:9px;height:9px;border-radius:50%;background:var(--teal);
+  animation:br 4s var(--ease) infinite}
+@keyframes br{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:1;transform:scale(1.9)}}
+
+/* ─────────── TEMPS D'ÉCRAN ─────────── */
+.screen{position:relative;overflow:hidden;
+  background:linear-gradient(146deg,#231334 0%,#2c1840 50%,#1d1430 100%);
+  border:1px solid #453063;border-radius:var(--r-lg);padding:var(--s5);margin-bottom:var(--s3)}
+.screen::after{content:"";position:absolute;right:-48px;top:-56px;width:170px;height:170px;
+  background:radial-gradient(circle,rgba(139,124,246,.24),transparent 68%);pointer-events:none}
+.screen .lb{font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;
+  color:#b9aeff;font-weight:700}
+.screen .big{font-size:40px;font-weight:780;letter-spacing:-.045em;margin:var(--s2) 0 2px;line-height:1}
+.screen .of{font-size:13px;color:#a094d6}
+.screen .vd{font-size:12.5px;color:#c3b9ff;line-height:1.6;position:relative;z-index:1;margin-top:var(--s3)}
+.screen.over .big{color:#ff9d9d}
+.screen.under .big{color:var(--teal-soft)}
+
+/* saisie rapide en heures */
+.quick{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s4)}
+.quick button{flex:1 1 58px;min-height:44px;border-radius:11px;
+  background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);
+  font-size:13px;font-weight:660;color:#dcd5ff;transition:all var(--fast)}
+.quick button:active{transform:scale(.93)}
+.quick button.on{background:var(--violet);border-color:var(--violet);color:#0f0a22}
+
+/* mini histogramme 7 jours */
+.spark{display:flex;align-items:flex-end;gap:5px;height:56px;margin-top:var(--s2)}
+.spark .c{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%}
+.spark .c i{display:block;width:100%;border-radius:5px 5px 2px 2px;background:var(--violet);
+  margin-top:auto;min-height:3px;transition:height .5s var(--ease)}
+.spark .c.over i{background:var(--coral)}
+.spark .c.good i{background:var(--teal)}
+.spark .c.none i{background:var(--surface-3)}
+.spark .c em{font-style:normal;font-size:9.5px;color:var(--tx-3);font-weight:700}
+.spark .c.today em{color:var(--teal)}
+
+/* ─────────── COUVRE-FEU ─────────── */
+.curfew{display:flex;align-items:center;gap:var(--s3);padding:var(--s4);
+  background:var(--surface-2);border:1.5px solid var(--border);border-radius:var(--r)}
+.curfew .ic{font-size:22px;flex:0 0 auto}
+.curfew .b{flex:1;min-width:0}
+.curfew .b .n{font-size:14.5px;font-weight:620}
+.curfew .b .d{font-size:12px;color:var(--tx-3);margin-top:3px;line-height:1.4}
+.curfew.night{background:var(--coral-dim);border-color:#5c2a2a}
+.curfew.night .b .n{color:#ff9d9d}
+.curfew.night .b .d{color:#d68a8a}
+.curfew input[type=time]{background:var(--surface-3);border:1.5px solid var(--border);
+  border-radius:10px;padding:9px var(--s3);font-size:14px;font-weight:660;
+  color:var(--tx);flex:0 0 auto;outline:none}
+.curfew input[type=time]:focus{border-color:var(--teal)}
+
+/* ─────────── SÉRIE / FLAMME ─────────── */
+.streaks{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+.strk{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s4);
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r)}
+.strk .ic{font-size:21px;flex:0 0 auto;filter:grayscale(1);opacity:.4}
+.strk.live .ic{filter:none;opacity:1}
+.strk .b{min-width:0}
+.strk .b .v{font-size:19px;font-weight:760;letter-spacing:-.035em;line-height:1}
+.strk .b .l{font-size:10.5px;color:var(--tx-3);margin-top:4px;line-height:1.25}
+.strk.live .b .v{color:var(--gold)}
+
+/* ─────────── SESSIONS DU JOUR ─────────── */
+.sess{display:flex;align-items:center;gap:var(--s3);padding:11px 0;
+  border-bottom:1px solid var(--border);font-size:13.5px}
+.sess:last-child{border-bottom:0}
+.sess .d{width:9px;height:9px;border-radius:50%;background:var(--teal);flex:0 0 9px}
+.sess .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sess .m{color:var(--tx-3);font-size:12.5px;flex:0 0 auto;font-weight:640}

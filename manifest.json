@@ -1,15 +1,34 @@
 {
   "name": "CAP 2030 — Amadou Niang",
   "short_name": "CAP 2030",
-  "description": "Tableau de bord personnel — discipline, cap et projets.",
+  "description": "Discipline quotidienne, temps d'écran maîtrisé, cap 2030.",
+  "lang": "fr",
+  "dir": "ltr",
   "start_url": "./index.html",
   "scope": "./",
+  "id": "/medoq-app/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#080c18",
-  "theme_color": "#080c18",
+  "background_color": "#070b14",
+  "theme_color": "#070b14",
+  "categories": ["productivity", "lifestyle"],
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Lancer une session de fond",
+      "short_name": "Focus",
+      "url": "./index.html#focus",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Noter mon temps d'écran",
+      "short_name": "Écran",
+      "url": "./index.html#focus",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }

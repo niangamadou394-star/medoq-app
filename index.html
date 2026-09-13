@@ -3,285 +3,56 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#080c18">
+<meta name="theme-color" content="#070b14">
+<meta name="description" content="Tableau de bord personnel — discipline, temps d'écran, cap 2030.">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CAP 2030">
 <title>CAP 2030 — Amadou Niang</title>
-<style>
-:root{
-  --bg:#080c18; --bg2:#0d1322;
-  --surf:#131a2c; --surf2:#1a2338; --surf3:#222d47;
-  --line:#26304d; --line2:#334066;
-  --txt:#eef2fb; --txt2:#a7b3cd; --txt3:#6b7899;
-  --teal:#00d4aa; --teal-d:#0a3a33;
-  --gold:#f5b73d; --gold-d:#3d2f10;
-  --violet:#8b7cf6; --violet-d:#251f4a;
-  --coral:#ff6b6b; --coral-d:#3d1c1c;
-  --green:#34d399; --blue:#4d9fff;
-  --r:16px; --r2:12px;
-  --sat:env(safe-area-inset-top); --sab:env(safe-area-inset-bottom);
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0}
-body{
-  background:var(--bg); color:var(--txt);
-  font:15px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
-  padding-bottom:calc(78px + var(--sab));
-  overscroll-behavior-y:none;
-}
-input,textarea,select,button{font:inherit;color:inherit}
-button{background:none;border:0;cursor:pointer}
-h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em}
-.wrap{max-width:640px;margin:0 auto;padding:0 14px}
-
-/* ---------- HEADER ---------- */
-header{
-  position:sticky; top:0; z-index:40;
-  padding-top:var(--sat);
-  background:linear-gradient(180deg,#0b1120 0%,rgba(11,17,32,.96) 70%,rgba(11,17,32,0) 100%);
-  backdrop-filter:saturate(150%) blur(14px);
-  -webkit-backdrop-filter:saturate(150%) blur(14px);
-}
-.hd{display:flex;align-items:center;gap:13px;padding:11px 0 13px}
-.ring{position:relative;width:60px;height:60px;flex:0 0 60px}
-.ring svg{transform:rotate(-90deg)}
-.ring .val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-size:17px;font-weight:800;letter-spacing:-.04em}
-.hd-txt{flex:1;min-width:0}
-.hd-txt h1{font-size:16px;line-height:1.2}
-.hd-txt .sub{font-size:11.5px;color:var(--txt3);margin-top:3px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lvl{text-align:right;flex:0 0 auto}
-.lvl .t{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.04em;text-transform:uppercase}
-.lvl .n{font-size:10.5px;color:var(--txt3);margin-top:2px}
-.xpbar{height:3px;background:var(--surf2);border-radius:3px;overflow:hidden;margin-top:5px;width:74px}
-.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#ffd97a);border-radius:3px;transition:width .5s}
-
-/* ---------- CARDS ---------- */
-.card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);
-  padding:15px;margin-bottom:12px}
-.card.flat{background:var(--bg2)}
-.ct{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px}
-.ct h2{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--txt3);font-weight:700}
-.ct .meta{font-size:12px;color:var(--txt2);font-variant-numeric:tabular-nums}
-
-/* ---------- FAJR BANNER ---------- */
-.fajr{
-  background:linear-gradient(135deg,#16204a 0%,#1d2a5c 55%,#2a1f52 100%);
-  border:1px solid #2f3d78; border-radius:var(--r);
-  padding:14px 16px; margin-bottom:12px;
-  display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
-.fajr::after{content:"";position:absolute;right:-30px;top:-40px;width:130px;height:130px;
-  background:radial-gradient(circle,rgba(245,183,61,.22),transparent 68%)}
-.fajr .ic{font-size:24px}
-.fajr .t{font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1}
-.fajr .l{font-size:11px;color:#a9b6e8;margin-top:4px}
-.fajr .r{margin-left:auto;text-align:right;font-size:11px;color:#8f9ddb;line-height:1.45;position:relative;z-index:1}
-
-/* ---------- RITUALS ---------- */
-.rit{display:flex;flex-direction:column;gap:9px}
-.r{display:flex;align-items:center;gap:13px;padding:13px 14px;
-  background:var(--surf2);border:1.5px solid var(--line);border-radius:var(--r2);
-  transition:transform .12s,background .18s,border-color .18s;width:100%;text-align:left}
-.r:active{transform:scale(.975)}
-.r .ic{font-size:20px;width:26px;text-align:center;flex:0 0 26px}
-.r .tx{flex:1;min-width:0}
-.r .tx b{display:block;font-size:14.5px;font-weight:600}
-.r .tx span{display:block;font-size:11.5px;color:var(--txt3);margin-top:1px}
-.r .chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--line2);flex:0 0 26px;
-  display:flex;align-items:center;justify-content:center;font-size:14px;color:transparent;transition:.18s}
-.r.on{background:var(--teal-d);border-color:var(--teal)}
-.r.on .chk{background:var(--teal);border-color:var(--teal);color:#04140f}
-.r.on .tx b{color:var(--teal)}
-.r.on .tx span{color:#5fb8a5}
-.pts{font-size:10.5px;font-weight:700;color:var(--txt3);font-variant-numeric:tabular-nums}
-
-/* stepper row */
-.r.step{gap:10px}
-.stp{display:flex;align-items:center;gap:8px;flex:0 0 auto}
-.stp button{width:32px;height:32px;border-radius:9px;background:var(--surf3);
-  font-size:17px;font-weight:700;color:var(--txt2);display:flex;align-items:center;justify-content:center}
-.stp button:active{background:var(--line2)}
-.stp .v{min-width:52px;text-align:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
-
-/* ---------- INPUTS ---------- */
-.fld{width:100%;background:var(--surf2);border:1.5px solid var(--line);border-radius:var(--r2);
-  padding:12px 13px;font-size:14.5px;outline:none;transition:border-color .18s}
-.fld:focus{border-color:var(--teal)}
-.fld::placeholder{color:var(--txt3)}
-textarea.fld{resize:vertical;min-height:74px;line-height:1.55}
-.lbl{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--txt3);
-  font-weight:700;margin-bottom:7px;display:block}
-
-/* energy dots */
-.energy{display:flex;gap:5px;justify-content:space-between}
-.energy button{flex:1;height:36px;border-radius:9px;background:var(--surf2);
-  border:1.5px solid var(--line);font-size:12px;font-weight:700;color:var(--txt3);transition:.15s}
-.energy button.on{background:var(--gold);border-color:var(--gold);color:#1a1305}
-
-/* ---------- WEEK GRID ---------- */
-.wgrid{display:grid;grid-template-columns:1fr repeat(7,26px);gap:4px;align-items:center;font-size:11px}
-.wgrid .hdd{text-align:center;color:var(--txt3);font-weight:700;font-size:10px;padding-bottom:2px}
-.wgrid .hdd.today{color:var(--teal)}
-.wgrid .nm{color:var(--txt2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dot{height:26px;border-radius:7px;background:var(--surf2);border:1px solid var(--line);
-  display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent}
-.dot.on{background:var(--teal);border-color:var(--teal);color:#04140f}
-.dot.miss{background:var(--coral-d);border-color:#5a2a2a}
-.dot.fut{opacity:.35}
-
-/* ---------- PROGRESS BARS ---------- */
-.bar{height:8px;background:var(--surf2);border-radius:8px;overflow:hidden}
-.bar i{display:block;height:100%;border-radius:8px;transition:width .55s cubic-bezier(.4,0,.2,1);
-  background:linear-gradient(90deg,var(--teal),#6ee7cd)}
-.bar.gold i{background:linear-gradient(90deg,var(--gold),#ffd97a)}
-.bar.violet i{background:linear-gradient(90deg,var(--violet),#b9aeff)}
-.bar.coral i{background:linear-gradient(90deg,var(--coral),#ff9d9d)}
-
-/* ---------- STATS ---------- */
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.stat{background:var(--surf2);border:1px solid var(--line);border-radius:var(--r2);padding:12px 10px;text-align:center}
-.stat .v{font-size:21px;font-weight:800;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
-.stat .l{font-size:10px;color:var(--txt3);margin-top:5px;line-height:1.3}
-.stat.teal .v{color:var(--teal)} .stat.gold .v{color:var(--gold)}
-.stat.violet .v{color:var(--violet)} .stat.coral .v{color:var(--coral)}
-
-/* ---------- CHALLENGES ---------- */
-.chal{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
-.chal:last-child{border-bottom:0;padding-bottom:0}
-.chal .ic{font-size:19px;width:24px;text-align:center;flex:0 0 24px;filter:grayscale(1);opacity:.5}
-.chal.done .ic{filter:none;opacity:1}
-.chal .b{flex:1;min-width:0}
-.chal .b .n{font-size:13.5px;font-weight:600;display:flex;justify-content:space-between;gap:8px}
-.chal .b .n em{font-style:normal;color:var(--txt3);font-size:11.5px;font-variant-numeric:tabular-nums;flex:0 0 auto}
-.chal .b .bar{margin-top:7px;height:5px}
-.chal.done .b .n{color:var(--gold)}
-
-/* ---------- LISTS ---------- */
-.li{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
-.li:last-child{border-bottom:0}
-.li .box{width:22px;height:22px;border-radius:7px;border:2px solid var(--line2);flex:0 0 22px;margin-top:1px;
-  display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:.18s}
-.li.on .box{background:var(--teal);border-color:var(--teal);color:#04140f}
-.li .b{flex:1;min-width:0}
-.li .b .n{font-size:14px;font-weight:500;line-height:1.35}
-.li .b .d{font-size:11.5px;color:var(--txt3);margin-top:3px;line-height:1.4}
-.li.on .b .n{color:var(--txt3);text-decoration:line-through}
-.li .del{color:var(--txt3);font-size:17px;padding:0 2px;flex:0 0 auto;line-height:1}
-.tag{display:inline-block;font-size:10px;font-weight:700;padding:2.5px 7px;border-radius:5px;
-  letter-spacing:.03em;margin-top:5px}
-.tag.t1{background:var(--coral-d);color:#ff9d9d}
-.tag.t2{background:var(--gold-d);color:var(--gold)}
-.tag.t3{background:var(--teal-d);color:var(--teal)}
-.addrow{display:flex;gap:8px;margin-top:11px}
-.addrow .fld{padding:10px 12px;font-size:13.5px}
-.addrow button{flex:0 0 44px;background:var(--surf3);border-radius:var(--r2);font-size:20px;color:var(--teal);font-weight:600}
-
-/* relance button */
-.rlz{flex:0 0 auto;padding:7px 11px;border-radius:9px;background:var(--surf3);
-  font-size:11.5px;font-weight:700;color:var(--teal);white-space:nowrap}
-.rlz.done{background:var(--teal-d);color:#5fb8a5}
-
-/* ---------- CAP 2030 ---------- */
-.cap{background:linear-gradient(150deg,#0e2a24 0%,#123b32 45%,#1a3a2e 100%);
-  border:1px solid #1d5348;border-radius:var(--r);padding:18px;margin-bottom:12px;position:relative;overflow:hidden}
-.cap::after{content:"";position:absolute;right:-50px;bottom:-60px;width:180px;height:180px;
-  background:radial-gradient(circle,rgba(0,212,170,.16),transparent 68%)}
-.cap .lb{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#6fd6bd;font-weight:700}
-.cap .big{font-size:34px;font-weight:800;letter-spacing:-.045em;margin:8px 0 3px;line-height:1;
-  font-variant-numeric:tabular-nums}
-.cap .of{font-size:13px;color:#7fc9b5}
-.cap .bar{margin:14px 0 9px;height:10px;background:rgba(0,0,0,.35)}
-.cap .vd{font-size:12.5px;color:#a8e4d5;line-height:1.55;position:relative;z-index:1}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
-/* ---------- PLANNING ---------- */
-.tabs2{display:flex;gap:6px;margin-bottom:12px;background:var(--surf2);padding:4px;border-radius:11px}
-.tabs2 button{flex:1;padding:9px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--txt3)}
-.tabs2 button.on{background:var(--surf3);color:var(--txt)}
-.plan{font-size:12px}
-.plan .sl{display:grid;grid-template-columns:52px 1fr;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
-.plan .sl:last-child{border-bottom:0}
-.plan .h{color:var(--txt3);font-weight:700;font-size:11px;font-variant-numeric:tabular-nums;padding-top:2px}
-.plan .d{display:flex;flex-wrap:wrap;gap:5px}
-.chip{font-size:10.5px;font-weight:600;padding:4px 8px;border-radius:6px;background:var(--surf2);color:var(--txt2);
-  border:1px solid var(--line)}
-.chip.teal{background:var(--teal-d);color:var(--teal);border-color:#17564a}
-.chip.violet{background:var(--violet-d);color:#b9aeff;border-color:#3a3170}
-.chip.gold{background:var(--gold-d);color:var(--gold);border-color:#5c481a}
-.chip.blue{background:#122a4a;color:#8ec2ff;border-color:#1e3f6b}
-.chip.free{background:transparent;color:var(--txt3);border-style:dashed}
-
-/* ---------- NAV ---------- */
-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;
-  background:rgba(10,15,28,.93);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  border-top:1px solid var(--line);padding-bottom:var(--sab)}
-nav .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
-nav button{padding:10px 0 9px;display:flex;flex-direction:column;align-items:center;gap:4px;
-  font-size:10px;font-weight:600;color:var(--txt3);transition:color .18s}
-nav button .i{font-size:19px;line-height:1;opacity:.6;transition:.18s}
-nav button.on{color:var(--teal)}
-nav button.on .i{opacity:1;transform:translateY(-1px)}
-
-.page{display:none;padding-top:4px}
-.page.on{display:block;animation:in .26s ease}
-@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-.note{font-size:11.5px;color:var(--txt3);line-height:1.55;margin-top:10px}
-.hint{background:var(--violet-d);border:1px solid #3a3170;border-radius:var(--r2);
-  padding:11px 13px;font-size:12.5px;color:#c3b9ff;line-height:1.5;margin-bottom:12px}
-.win{background:linear-gradient(135deg,var(--gold-d),#4d3a12);border:1px solid #6b5420;
-  border-radius:var(--r2);padding:13px;font-size:13px;color:#ffd97a;font-weight:600;
-  text-align:center;margin-bottom:12px;display:none}
-.win.show{display:block;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
-@keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
-.ftr{text-align:center;font-size:10.5px;color:var(--txt3);padding:18px 0 8px;line-height:1.7}
-.ftr button{color:var(--txt2);text-decoration:underline;font-size:10.5px;padding:0 6px}
-.sep{height:1px;background:var(--line);margin:14px 0}
-</style>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="focus.css">
 </head>
 <body>
 
 <header>
   <div class="wrap hd">
     <div class="ring">
-      <svg width="60" height="60" viewBox="0 0 60 60">
-        <circle cx="30" cy="30" r="25" fill="none" stroke="#1e2740" stroke-width="6"/>
-        <circle id="arc" cx="30" cy="30" r="25" fill="none" stroke="#00d4aa" stroke-width="6"
-          stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157"/>
+      <svg width="54" height="54" viewBox="0 0 54 54" aria-hidden="true">
+        <circle cx="27" cy="27" r="25" fill="none" stroke="#1b2440" stroke-width="4.5"/>
+        <circle id="arc" cx="27" cy="27" r="25" fill="none" stroke="#00d9b2" stroke-width="4.5"
+                stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157"/>
       </svg>
-      <div class="val" id="scoreVal">0</div>
+      <div class="v num" id="scoreVal">0</div>
     </div>
     <div class="hd-txt">
       <h1 id="hTitle">Aujourd'hui</h1>
       <div class="sub" id="hSub">—</div>
     </div>
-    <div class="lvl">
-      <div class="t" id="lvlTitle">Apprenti</div>
-      <div class="n" id="lvlXp">0 XP</div>
-      <div class="xpbar"><i id="xpFill" style="width:0"></i></div>
-    </div>
+    <div class="lvl"><span class="dot"></span><span class="t" id="lvlTitle">Apprenti</span></div>
   </div>
 </header>
 
 <div class="wrap">
 
-<!-- ══════════════ JOUR ══════════════ -->
+<!-- ═══════════ JOUR ═══════════ -->
 <section class="page on" id="p-jour">
-  <div class="fajr">
+  <div class="dawn">
     <div class="ic">🕌</div>
     <div>
-      <div class="t" id="fajrT">—</div>
+      <div class="t num" id="fajrT">—</div>
       <div class="l">Fajr — Clermont-Ferrand</div>
     </div>
-    <div class="r" id="fajrR">—</div>
+    <div class="r num" id="fajrR">—</div>
   </div>
 
   <div class="win" id="win"></div>
 
   <div class="card">
-    <div class="ct"><h2>Les non-négociables</h2><span class="meta" id="ritMeta">0/6</span></div>
+    <div class="ct"><h2>Les non-négociables</h2><span class="meta num" id="ritMeta">0/6</span></div>
     <div class="rit" id="rituels"></div>
   </div>
 
@@ -291,55 +62,123 @@ nav button.on .i{opacity:1;transform:translateY(-1px)}
   </div>
 
   <div class="card">
-    <div class="ct"><h2>Énergie</h2><span class="meta" id="enMeta">—</span></div>
+    <div class="ct"><h2>Énergie</h2><span class="meta num" id="enMeta">—</span></div>
     <div class="energy" id="energy"></div>
   </div>
 
   <div class="card">
     <div class="ct"><h2>Le soir — une phrase</h2></div>
-    <textarea class="fld" id="note" placeholder=""></textarea>
+    <textarea class="fld" id="note" rows="2"></textarea>
     <div class="note" id="notePrompt"></div>
   </div>
 </section>
 
-<!-- ══════════════ SEMAINE ══════════════ -->
+<!-- ═══════════ FOCUS ═══════════ -->
+<section class="page" id="p-focus">
+  <div class="screen" id="scrCard">
+    <div class="lb">Temps d'écran — aujourd'hui</div>
+    <div class="big num" id="scrBig">—</div>
+    <div class="of" id="scrOf">—</div>
+    <div class="quick" id="scrQuick"></div>
+    <div class="vd" id="scrVerdict">—</div>
+  </div>
+
+  <div class="card">
+    <div class="ct"><h2>Sept derniers jours</h2><span class="meta">objectif quotidien</span></div>
+    <div class="spark" id="scrSpark"></div>
+    <div class="sep"></div>
+    <label class="lbl" for="scrTarget">Mon plafond, en minutes</label>
+    <input class="fld num" id="scrTarget" type="number" inputmode="numeric" min="15" max="720" step="15">
+    <div class="note">Chaque jour passé sous ce plafond vaut 20 points et allonge ta série.
+      Descends-le de 15 minutes dès que trois semaines tiennent.</div>
+  </div>
+
+  <div class="card">
+    <div class="ct"><h2>Session de fond</h2><span class="meta" id="sessMeta">—</span></div>
+    <div class="timer">
+      <div class="tring" id="tring">
+        <svg width="228" height="228" viewBox="0 0 228 228" aria-hidden="true">
+          <circle cx="114" cy="114" r="104" fill="none" stroke="#1b2440" stroke-width="7"/>
+          <circle id="tArc" cx="114" cy="114" r="104" fill="none" stroke="#00d9b2" stroke-width="7"
+                  stroke-linecap="round"/>
+        </svg>
+        <div class="face">
+          <div class="time" id="tTime">50:00</div>
+          <div class="lab" id="tLab">prêt</div>
+        </div>
+      </div>
+      <input class="fld" id="tTask" placeholder="Sur quoi ? (facultatif)">
+      <div class="durs" id="durs"></div>
+      <div class="tbtns">
+        <button class="btn prim" id="tStart">Démarrer</button>
+        <button class="btn ghost hide" id="tPause">Pause</button>
+        <button class="btn danger hide" id="tStop">Arrêter</button>
+      </div>
+    </div>
+    <div class="sep"></div>
+    <div id="sessList"></div>
+  </div>
+
+  <div class="card">
+    <div class="ct"><h2>Le soir</h2></div>
+    <div class="curfew" id="curfewBox">
+      <span class="ic" id="curfewIc">⏳</span>
+      <span class="b"><span class="n" id="curfewN">—</span><span class="d" id="curfewD">—</span></span>
+      <input type="time" id="curfewTime" value="22:00" aria-label="Heure de couvre-feu">
+    </div>
+    <div style="height:8px"></div>
+    <button class="r" id="noPhone">
+      <span class="ic">🌙</span>
+      <span class="tx"><b>Soirée sans téléphone</b><span>posé, loin du lit, jusqu'à demain</span></span>
+      <span class="pts">+15</span><span class="chk">✓</span>
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="ct"><h2>Séries en cours</h2></div>
+    <div class="streaks" id="streaks"></div>
+    <div class="note">Une série ne se rattrape pas. C'est pour ça qu'elle vaut quelque chose.</div>
+  </div>
+</section>
+
+<!-- ═══════════ SEMAINE ═══════════ -->
 <section class="page" id="p-semaine">
   <div class="card">
     <div class="ct"><h2>Constance</h2><span class="meta" id="wkMeta">—</span></div>
     <div class="wgrid" id="wgrid"></div>
     <div class="sep"></div>
     <div class="stats">
-      <div class="stat teal"><div class="v" id="sWeek">0%</div><div class="l">score semaine</div></div>
-      <div class="stat gold"><div class="v" id="sStreak">0</div><div class="l">jours Fajr d'affilée</div></div>
-      <div class="stat violet"><div class="v" id="sDw">0h</div><div class="l">Medoq cette semaine</div></div>
+      <div class="stat teal"><div class="v num" id="sWeek">0%</div><div class="l">score semaine</div></div>
+      <div class="stat violet"><div class="v num" id="sDw">0h</div><div class="l">Medoq cette semaine</div></div>
+      <div class="stat gold"><div class="v num" id="sScr">—</div><div class="l">écran / jour</div></div>
     </div>
   </div>
 
   <div class="card">
     <div class="ct"><h2>Rythme de la semaine</h2><span class="meta" id="wkType">—</span></div>
-    <div class="tabs2">
-      <button data-plan="ent" id="tabEnt">Semaine entreprise</button>
-      <button data-plan="eco" id="tabEco">Semaine école</button>
+    <div class="seg">
+      <button id="tabEnt">Semaine entreprise</button>
+      <button id="tabEco">Semaine école</button>
     </div>
     <div class="plan" id="planBox"></div>
   </div>
 
   <div class="card">
     <div class="ct"><h2>Revue du vendredi</h2></div>
-    <label class="lbl">Ce qui a marché</label>
-    <textarea class="fld" id="rv1" style="min-height:56px"></textarea>
-    <label class="lbl" style="margin-top:12px">Ce qui a bloqué</label>
-    <textarea class="fld" id="rv2" style="min-height:56px"></textarea>
-    <label class="lbl" style="margin-top:12px">La décision de la semaine</label>
-    <textarea class="fld" id="rv3" style="min-height:56px"></textarea>
+    <label class="lbl" for="rv1">Ce qui a marché</label>
+    <textarea class="fld" id="rv1" rows="2"></textarea>
+    <label class="lbl" for="rv2" style="margin-top:16px">Ce qui a bloqué</label>
+    <textarea class="fld" id="rv2" rows="2"></textarea>
+    <label class="lbl" for="rv3" style="margin-top:16px">La décision de la semaine</label>
+    <textarea class="fld" id="rv3" rows="2"></textarea>
   </div>
 </section>
 
-<!-- ══════════════ CAP ══════════════ -->
+<!-- ═══════════ CAP ═══════════ -->
 <section class="page" id="p-cap">
   <div class="cap">
     <div class="lb">Cap — 31 décembre 2030</div>
-    <div class="big" id="capNow">0 €</div>
+    <div class="big num" id="capNow">0 €</div>
     <div class="of">sur 1 000 000 €</div>
     <div class="bar"><i id="capBar" style="width:0"></i></div>
     <div class="vd" id="capVerdict">Renseigne tes chiffres ci-dessous.</div>
@@ -348,516 +187,122 @@ nav button.on .i{opacity:1;transform:translateY(-1px)}
   <div class="card">
     <div class="ct"><h2>Mes leviers</h2><span class="meta" id="capMonths">—</span></div>
     <div class="grid2">
-      <div><label class="lbl">Patrimoine actuel €</label><input class="fld" id="cPat" type="number" inputmode="numeric" placeholder="0"></div>
-      <div><label class="lbl">Épargne / mois €</label><input class="fld" id="cEpa" type="number" inputmode="numeric" placeholder="0"></div>
-      <div><label class="lbl">Ma part Medoq %</label><input class="fld" id="cPart" type="number" inputmode="numeric" placeholder="100"></div>
-      <div><label class="lbl">Valeur Medoq €</label><input class="fld" id="cVal" type="number" inputmode="numeric" placeholder="0"></div>
+      <div><label class="lbl" for="cPat">Patrimoine actuel €</label>
+        <input class="fld num" id="cPat" type="number" inputmode="numeric" placeholder="0"></div>
+      <div><label class="lbl" for="cEpa">Épargne / mois €</label>
+        <input class="fld num" id="cEpa" type="number" inputmode="numeric" placeholder="0"></div>
+      <div><label class="lbl" for="cPart">Ma part Medoq %</label>
+        <input class="fld num" id="cPart" type="number" inputmode="numeric" placeholder="100"></div>
+      <div><label class="lbl" for="cVal">Valeur Medoq €</label>
+        <input class="fld num" id="cVal" type="number" inputmode="numeric" placeholder="0"></div>
     </div>
-    <div class="note">L'épargne seule ne fait pas un million. Elle paie ta liberté de continuer. Le million vient de ce que Medoq vaudra — et de la part que tu en gardes.</div>
+    <div class="note">L'épargne seule ne fait pas un million. Elle paie ta liberté de continuer.
+      Le million vient de ce que Medoq vaudra — et de la part que tu en gardes.</div>
   </div>
 
   <div class="card">
-    <div class="ct"><h2>Ce mois-ci</h2><span class="meta" id="moisMeta">—</span></div>
+    <div class="ct"><h2>Ce mois-ci</h2><span class="meta num" id="moisMeta">—</span></div>
     <div class="grid2">
-      <div><label class="lbl">Entré €</label><input class="fld" id="mIn" type="number" inputmode="numeric" placeholder="0"></div>
-      <div><label class="lbl">Sorti €</label><input class="fld" id="mOut" type="number" inputmode="numeric" placeholder="0"></div>
+      <div><label class="lbl" for="mIn">Entré €</label>
+        <input class="fld num" id="mIn" type="number" inputmode="numeric" placeholder="0"></div>
+      <div><label class="lbl" for="mOut">Sorti €</label>
+        <input class="fld num" id="mOut" type="number" inputmode="numeric" placeholder="0"></div>
     </div>
-    <div class="bar" id="cashBarWrap" style="margin-top:13px"><i id="cashBar" style="width:0"></i></div>
+    <div class="bar" id="cashBarWrap" style="margin-top:16px"><i id="cashBar" style="width:0"></i></div>
     <div class="note" id="cashNote">—</div>
   </div>
 
   <div class="card">
-    <div class="ct"><h2>Défis</h2><span class="meta" id="chalMeta">0 remportés</span></div>
+    <div class="ct"><h2>Défis</h2><span class="meta" id="chalMeta">0 remporté</span></div>
     <div id="chals"></div>
   </div>
 
-  <div class="card flat">
+  <div class="card">
     <div class="ct"><h2>Qui je deviens</h2></div>
-    <textarea class="fld" id="vision" style="min-height:64px" placeholder="En une phrase. Relis-la les jours où tu n'as pas envie."></textarea>
+    <textarea class="fld" id="vision" rows="2"
+      placeholder="En une phrase. Relis-la les jours où tu n'as pas envie."></textarea>
   </div>
 </section>
 
-<!-- ══════════════ PROJETS ══════════════ -->
+<!-- ═══════════ PROJETS ═══════════ -->
 <section class="page" id="p-projets">
   <div class="hint" id="focusHint">—</div>
 
   <div class="card">
-    <div class="ct"><h2>🚀 Medoq — jalons</h2><span class="meta" id="jMeta">—</span></div>
+    <div class="ct"><h2>🚀 Medoq — jalons</h2><span class="meta num" id="jMeta">—</span></div>
     <div id="jalons"></div>
-    <div class="addrow"><input class="fld" id="jNew" placeholder="Nouveau jalon"><button data-add="jalons">＋</button></div>
+    <div class="addrow">
+      <input class="fld" id="jNew" placeholder="Nouveau jalon">
+      <button data-add="jalons" aria-label="Ajouter un jalon">＋</button>
+    </div>
   </div>
 
   <div class="card">
     <div class="ct"><h2>📨 Relances réseau</h2><span class="meta" id="rMeta">—</span></div>
     <div id="relances"></div>
-    <div class="addrow"><input class="fld" id="rNew" placeholder="Nouveau contact"><button data-add="relances">＋</button></div>
+    <div class="addrow">
+      <input class="fld" id="rNew" placeholder="Nouveau contact">
+      <button data-add="relances" aria-label="Ajouter un contact">＋</button>
+    </div>
   </div>
 
   <div class="card">
     <div class="ct"><h2>✅ Actions ouvertes</h2><span class="meta" id="aMeta">—</span></div>
     <div id="actions"></div>
-    <div class="addrow"><input class="fld" id="aNew" placeholder="Nouvelle action"><button data-add="actions">＋</button></div>
+    <div class="addrow">
+      <input class="fld" id="aNew" placeholder="Nouvelle action">
+      <button data-add="actions" aria-label="Ajouter une action">＋</button>
+    </div>
+    <div class="note">Touche l'étiquette de priorité pour la faire tourner :
+      avant lundi → cette semaine → ce mois-ci.</div>
   </div>
 
   <div class="ftr">
-    Tout est gardé sur cet appareil. Exporte une copie de temps en temps.<br>
+    Tout reste sur cet appareil. Exporte une copie de temps en temps.<br>
     <button id="exp">Exporter</button>·<button id="imp">Importer</button>·<button id="rst">Réinitialiser</button>
-    <input type="file" id="impFile" accept="application/json" style="display:none">
+    <input type="file" id="impFile" accept="application/json" hidden>
   </div>
 </section>
 
 </div>
 
-<nav><div class="in">
-  <button data-p="jour" class="on"><span class="i">◎</span>Jour</button>
-  <button data-p="semaine"><span class="i">▦</span>Semaine</button>
-  <button data-p="cap"><span class="i">◆</span>Cap</button>
-  <button data-p="projets"><span class="i">⚑</span>Projets</button>
-</div></nav>
+<!-- ═══════════ PLEIN ÉCRAN DE SESSION ═══════════ -->
+<div id="zen">
+  <span class="breathe"></span>
+  <div class="big num" id="zTime">50:00</div>
+  <div class="task" id="zTask">Session de travail de fond</div>
+  <div class="sub">Pose le téléphone, écran vers le bas. Je compte.</div>
+  <div class="acts">
+    <button class="btn ghost" id="zPause">Pause</button>
+    <button class="btn danger" id="zStop">Arrêter</button>
+  </div>
+  <button class="btn ghost" id="zMin" style="min-height:40px;padding:0 18px;font-size:13px">Masquer</button>
+</div>
 
-<script>
-"use strict";
-/* ══════════ ÉTAT ══════════ */
-var KEY="cap2030.v1";
-var S=(function(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}})();
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+<div id="toast" role="status" aria-live="polite"></div>
 
-S.days=S.days||{}; S.cap=S.cap||{}; S.mois=S.mois||{}; S.rev=S.rev||{};
-S.jalons=S.jalons||null; S.relances=S.relances||null; S.actions=S.actions||null;
-S.vision=S.vision||"";
+<nav>
+  <div class="in">
+    <button data-p="jour" class="on">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/></svg>Jour
+    </button>
+    <button data-p="focus">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.2v5l3.2 2"/></svg>Focus
+    </button>
+    <button data-p="semaine">
+      <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8.5 3v3M15.5 3v3"/></svg>Semaine
+    </button>
+    <button data-p="cap">
+      <svg viewBox="0 0 24 24"><path d="M12 3.2l8.4 8.8-8.4 8.8L3.6 12z"/><path d="M12 8.4l3.4 3.6-3.4 3.6"/></svg>Cap
+    </button>
+    <button data-p="projets">
+      <svg viewBox="0 0 24 24"><path d="M5.5 21V4.2a1 1 0 011-1h11.2a.6.6 0 01.46 1l-3.1 3.6 3.1 3.6a.6.6 0 01-.46 1H5.5"/></svg>Projets
+    </button>
+  </div>
+</nav>
 
-var DEF_J=[{n:"Mettre la PWA en ligne sur son propre dépôt",d:0},
-{n:"Rédiger la page de présentation Medoq (1 page)",d:0},
-{n:"10 premiers utilisateurs testeurs",d:0},
-{n:"Chiffrer le business plan à jour",d:0},
-{n:"Premier euro encaissé",d:0}];
-var DEF_R=[];
-var DEF_A=[];
-if(!S.jalons)S.jalons=DEF_J.slice();
-if(!S.relances)S.relances=DEF_R.slice();
-if(!S.actions)S.actions=DEF_A.slice();
-
-/* ══════════ TEMPS ══════════ */
-var NOW=new Date();
-function ymd(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
-var TODAY=ymd(NOW);
-function isoWeek(d){var t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
-  var dy=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-dy);
-  var y0=new Date(Date.UTC(t.getUTCFullYear(),0,1));
-  return{w:Math.ceil((((t-y0)/864e5)+1)/7),y:t.getUTCFullYear()}}
-var WK=isoWeek(NOW), WKID=WK.y+"-W"+WK.w;
-var ECOLE=WK.w%2===0;
-function mondayOf(d){var x=new Date(d);var g=(x.getDay()+6)%7;x.setDate(x.getDate()-g);x.setHours(0,0,0,0);return x}
-var MON=mondayOf(NOW);
-function D(k){if(!S.days[k])S.days[k]={};return S.days[k]}
-var T=D(TODAY);
-
-/* ══════════ FAJR ══════════ */
-var LAT=45.7772, LNG=3.0870, ANG=12;
-function ds(x){return Math.sin(x*Math.PI/180)} function dc(x){return Math.cos(x*Math.PI/180)}
-function das(x){return Math.asin(x)*180/Math.PI} function dac(x){return Math.acos(x)*180/Math.PI}
-function dat2(y,x){return Math.atan2(y,x)*180/Math.PI}
-function fa(a){a=a-360*Math.floor(a/360);return a<0?a+360:a}
-function fh(a){a=a-24*Math.floor(a/24);return a<0?a+24:a}
-function jul(y,m,d){if(m<=2){y-=1;m+=12}var A=Math.floor(y/100),B=2-A+Math.floor(A/4);
-  return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5}
-function sun(jd){var Dd=jd-2451545,g=fa(357.529+.98560028*Dd),q=fa(280.459+.98564736*Dd);
-  var L=fa(q+1.915*ds(g)+.020*ds(2*g)),e=23.439-3.6e-7*Dd;
-  var RA=fh(dat2(dc(e)*ds(L),dc(L))/15);
-  return{d:das(ds(e)*ds(L)),eq:q/15-RA}}
-function solar(date,ang){
-  var jd=jul(date.getFullYear(),date.getMonth()+1,date.getDate())-LNG/360;
-  var sp=sun(jd), tz=-date.getTimezoneOffset()/60;
-  var dh=12+tz-LNG/15-sp.eq;
-  var r=(-ds(ang)-ds(sp.d)*ds(LAT))/(dc(sp.d)*dc(LAT));
-  if(r<-1||r>1)return null;
-  return dh-dac(r)/15;
-}
-function hm(h){if(h===null)return"—";h=fh(h);var m=Math.round(h*60);
-  return ("0"+Math.floor(m/60)).slice(-2)+"h"+("0"+(m%60)).slice(-2)}
-(function(){
-  var f=solar(NOW,ANG), lev=solar(NOW,0.833);
-  document.getElementById("fajrT").textContent=hm(f);
-  document.getElementById("fajrR").innerHTML="lever du soleil<br><b style='color:#dce4ff'>"+hm(lev)+"</b>";
-})();
-
-/* ══════════ RITUELS ══════════ */
-var GYM=[1,3,5,6]; // lun mer ven sam
-var isGym=GYM.indexOf(NOW.getDay())>-1;
-var RIT=[
- {k:"fajr", i:"🕌", n:"Prière du Fajr",       s:"la journée se gagne avant le jour", p:25},
- {k:"prop", i:"🧹", n:"Propreté",             s:"lit fait, douche, espace rangé",     p:10},
- {k:"lect", i:"📖", n:"Lecture — 30 minutes", s:"livre, pas écran",                   p:25},
- {k:"sport",i:"🏋️", n:"Salle",               s:"l'abonnement est déjà payé",         p:15, gym:1},
- {k:"rlz",  i:"📨", n:"Une relance envoyée",  s:"un message part, même court",        p:15},
-];
-var DW_TARGET=60;
-function maxPts(){var m=0;RIT.forEach(function(r){if(r.gym&&!isGym)return;m+=r.p});return m+25}
-function dayPts(d,dow){
-  var g=GYM.indexOf(dow)>-1,p=0;
-  RIT.forEach(function(r){if(r.gym&&!g)return;if(d[r.k])p+=r.p});
-  if((d.dw||0)>=DW_TARGET)p+=25; else p+=Math.round(25*Math.min(1,(d.dw||0)/DW_TARGET));
-  return p;
-}
-function dayMax(dow){var g=GYM.indexOf(dow)>-1,m=25;RIT.forEach(function(r){if(r.gym&&!g)return;m+=r.p});return m}
-
-function renderRit(){
-  var box=document.getElementById("rituels");box.innerHTML="";var done=0,tot=0;
-  RIT.forEach(function(r){
-    if(r.gym&&!isGym)return; tot++;
-    var on=!!T[r.k]; if(on)done++;
-    var b=document.createElement("button");
-    b.className="r"+(on?" on":"");
-    b.innerHTML='<span class="ic">'+r.i+'</span><span class="tx"><b>'+r.n+'</b><span>'+r.s+'</span></span>'+
-      '<span class="pts">+'+r.p+'</span><span class="chk">✓</span>';
-    b.onclick=function(){T[r.k]=!T[r.k];save();renderAll();};
-    box.appendChild(b);
-  });
-  // Medoq stepper
-  tot++; var dw=T.dw||0; if(dw>=DW_TARGET)done++;
-  var s=document.createElement("div");
-  s.className="r step"+(dw>=DW_TARGET?" on":"");
-  s.innerHTML='<span class="ic">🚀</span><span class="tx"><b>Medoq — travail de fond</b><span>objectif 1 h par jour</span></span>'+
-    '<span class="stp"><button data-d="-30">−</button><span class="v">'+(dw?(Math.floor(dw/60)?Math.floor(dw/60)+"h":"")+(dw%60?(dw%60)+"m":""):"0")+'</span><button data-d="30">＋</button></span>';
-  s.querySelectorAll("button").forEach(function(b){
-    b.onclick=function(){T.dw=Math.max(0,(T.dw||0)+parseInt(b.dataset.d,10));save();renderAll();};
-  });
-  box.appendChild(s);
-  document.getElementById("ritMeta").textContent=done+"/"+tot;
-}
-
-/* ══════════ SCORE / XP / NIVEAU ══════════ */
-var LEVELS=[[0,"Apprenti"],[600,"Discipliné"],[1800,"Bâtisseur"],[4000,"Stratège"],
-  [8000,"Opérateur"],[14000,"Fondateur"],[24000,"Souverain"]];
-function totalXp(){var x=0;for(var k in S.days){var d=new Date(k+"T12:00:00");x+=dayPts(S.days[k],d.getDay());
-  if(S.days[k].note)x+=10}
-  if(S.rev)for(var w in S.rev)if(S.rev[w]&&S.rev[w].a)x+=50;
-  return x}
-function renderScore(){
-  var p=dayPts(T,NOW.getDay()), m=dayMax(NOW.getDay());
-  var pct=Math.round(p/m*100);
-  document.getElementById("scoreVal").textContent=pct;
-  var arc=document.getElementById("arc");
-  arc.style.strokeDashoffset=157-157*pct/100;
-  arc.setAttribute("stroke",pct>=85?"#00d4aa":pct>=50?"#f5b73d":"#ff6b6b");
-  var w=document.getElementById("win");
-  if(pct>=100){w.textContent="★ Journée pleine. C'est comme ça qu'on construit.";w.classList.add("show")}
-  else w.classList.remove("show");
-
-  var xp=totalXp(),li=0;
-  for(var i=0;i<LEVELS.length;i++)if(xp>=LEVELS[i][0])li=i;
-  document.getElementById("lvlTitle").textContent=LEVELS[li][1];
-  document.getElementById("lvlXp").textContent=xp.toLocaleString("fr-FR")+" XP";
-  var lo=LEVELS[li][0],hi=LEVELS[li+1]?LEVELS[li+1][0]:lo+1;
-  document.getElementById("xpFill").style.width=Math.min(100,(xp-lo)/(hi-lo)*100)+"%";
-
-  var jours=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
-  document.getElementById("hTitle").textContent=jours[NOW.getDay()].charAt(0).toUpperCase()+jours[NOW.getDay()].slice(1)+" "+NOW.getDate();
-  document.getElementById("hSub").textContent="S"+WK.w+" · "+(ECOLE?"semaine école":"semaine entreprise — vendredi libre");
-}
-
-/* ══════════ SEMAINE ══════════ */
-function streak(key){
-  var n=0,d=new Date(NOW);
-  for(var i=0;i<400;i++){
-    var k=ymd(d),v=S.days[k];
-    if(v&&v[key]){n++}
-    else if(i>0||!(v&&v[key])){ if(i===0){d.setDate(d.getDate()-1);continue} break }
-    d.setDate(d.getDate()-1);
-  }
-  return n;
-}
-function renderWeek(){
-  var g=document.getElementById("wgrid");g.innerHTML="";
-  var L=["L","M","M","J","V","S","D"];
-  g.appendChild(el("div","hdd",""));
-  for(var i=0;i<7;i++){var d=new Date(MON);d.setDate(MON.getDate()+i);
-    g.appendChild(el("div","hdd"+(ymd(d)===TODAY?" today":""),L[i]))}
-  var rows=RIT.concat([{k:"dw",i:"🚀",n:"Medoq"}]);
-  rows.forEach(function(r){
-    g.appendChild(el("div","nm",r.i+" "+(r.n.split("—")[0]).trim()));
-    for(var i=0;i<7;i++){
-      var d=new Date(MON);d.setDate(MON.getDate()+i);var k=ymd(d),v=S.days[k]||{};
-      var fut=d>NOW&&k!==TODAY;
-      var on=r.k==="dw"?((v.dw||0)>=DW_TARGET):!!v[r.k];
-      var skip=r.gym&&GYM.indexOf(d.getDay())===-1;
-      var c="dot"+(on?" on":"")+(fut?" fut":"")+(!on&&!fut&&!skip?" miss":"");
-      if(skip)c="dot fut";
-      g.appendChild(el("div",c,on?"✓":""));
-    }
-  });
-  var p=0,m=0,dw=0,n=0;
-  for(var i=0;i<7;i++){var d=new Date(MON);d.setDate(MON.getDate()+i);
-    if(d>NOW&&ymd(d)!==TODAY)continue;
-    var v=S.days[ymd(d)]||{};p+=dayPts(v,d.getDay());m+=dayMax(d.getDay());dw+=(v.dw||0);n++}
-  var pct=m?Math.round(p/m*100):0;
-  document.getElementById("sWeek").textContent=pct+"%";
-  document.getElementById("sStreak").textContent=streak("fajr");
-  document.getElementById("sDw").textContent=(dw/60).toFixed(dw%60?1:0)+"h";
-  document.getElementById("wkMeta").textContent=n+" jour"+(n>1?"s":"")+" écoulé"+(n>1?"s":"");
-  document.getElementById("wkType").textContent=ECOLE?"école · S"+WK.w:"entreprise · S"+WK.w;
-}
-function el(t,c,x){var e=document.createElement(t);e.className=c;e.textContent=x;return e}
-
-/* ══════════ PLANNING ══════════ */
-var PLANS={
- ent:[["7h","<b>Salle</b> lun·mer·ven",[["teal","Salle 7h"],["free","mar jeu — repos"]]],
-      ["9h","",[["blue","Entreprise — lun à jeu"],["teal","Medoq — ven + sam matin"]]],
-      ["14h","",[["blue","Entreprise — lun à jeu"],["gold","Conduite / élèves — ven"],["teal","Salle — sam"]]],
-      ["17h30","",[["gold","Cours 18h — lun"],["teal","Business — mar"],["violet","Relances — jeu"]]],
-      ["20h","",[["teal","Build Medoq — mer"],["violet","Revue 21h — ven"],["gold","Prépa semaine 18h — dim"]]]],
- eco:[["7h","",[["teal","Salle 7h — lun·mer·ven"]]],
-      ["9h",""  ,[["blue","Entreprise — lun mar"],["violet","École — mer jeu ven"]]],
-      ["14h","",[["blue","Entreprise — lun mar"],["violet","École — mer jeu ven"],["teal","Salle — sam"]]],
-      ["17h30","",[["gold","Cours 18h — lun"],["teal","Business — mar"],["violet","Relances — jeu"]]],
-      ["20h","",[["teal","Build Medoq — mer"],["violet","Revue 21h — ven"],["gold","Prépa semaine 18h — dim"]]]]
-};
-function renderPlan(which){
-  var b=document.getElementById("planBox");b.innerHTML="";
-  PLANS[which].forEach(function(row){
-    var d=document.createElement("div");d.className="sl";
-    var h=el("div","h",row[0]);var c=document.createElement("div");c.className="d";
-    row[2].forEach(function(ch){var s=el("span","chip "+ch[0],ch[1]);c.appendChild(s)});
-    d.appendChild(h);d.appendChild(c);b.appendChild(d);
-  });
-  document.getElementById("tabEnt").className=which==="ent"?"on":"";
-  document.getElementById("tabEco").className=which==="eco"?"on":"";
-}
-document.getElementById("tabEnt").onclick=function(){renderPlan("ent")};
-document.getElementById("tabEco").onclick=function(){renderPlan("eco")};
-
-/* ══════════ CAP 2030 ══════════ */
-function renderCap(){
-  var pat=+document.getElementById("cPat").value||0;
-  var epa=+document.getElementById("cEpa").value||0;
-  var part=+document.getElementById("cPart").value||0;
-  var val=+document.getElementById("cVal").value||0;
-  S.cap={pat:pat,epa:epa,part:part,val:val};save();
-  var patrimoine=pat+val*part/100;
-  var pct=Math.min(100,patrimoine/1e6*100);
-  document.getElementById("capNow").textContent=Math.round(patrimoine).toLocaleString("fr-FR")+" €";
-  document.getElementById("capBar").style.width=Math.max(pct,.6)+"%";
-  var fin=new Date(2030,11,31);
-  var mois=Math.max(1,Math.round((fin-NOW)/(864e5*30.44)));
-  document.getElementById("capMonths").textContent=mois+" mois restants";
-  var proj=pat, r=0.04/12;
-  for(var i=0;i<mois;i++)proj=proj*(1+r)+epa;
-  var gap=1e6-proj;
-  var need=part>0?gap/(part/100):null;
-  var t;
-  if(epa<=0&&pat<=0){t="Renseigne ton patrimoine et ton épargne mensuelle. Sans chiffre, il n'y a pas de cap — juste une intention."}
-  else if(gap<=0){t="Ton épargne seule t'y emmène. C'est rare. Vérifie tes chiffres."}
-  else{
-    t="À "+epa.toLocaleString("fr-FR")+" € épargnés par mois, tu arrives à <b style='color:#eafff9'>"+Math.round(proj).toLocaleString("fr-FR")+" €</b> fin 2030. "+
-      "Il manque <b style='color:#eafff9'>"+Math.round(gap).toLocaleString("fr-FR")+" €</b>.";
-    if(need&&part>0) t+=" Avec "+part+" % de Medoq, l'entreprise doit valoir <b style='color:#ffe3a6'>"+
-      (need>=1e6?(need/1e6).toFixed(1).replace(".",",")+" M€":Math.round(need).toLocaleString("fr-FR")+" €")+"</b>.";
-    else t+=" Renseigne ta part dans Medoq pour savoir ce que l'entreprise doit valoir.";
-  }
-  document.getElementById("capVerdict").innerHTML=t;
-}
-function renderMois(){
-  var i=+document.getElementById("mIn").value||0, o=+document.getElementById("mOut").value||0;
-  S.mois={in:i,out:o};save();
-  var solde=i-o;
-  var d20=new Date(NOW.getFullYear(),NOW.getMonth(),20);
-  if(d20<NOW)d20=new Date(NOW.getFullYear(),NOW.getMonth()+1,20);
-  var j=Math.max(1,Math.ceil((d20-NOW)/864e5));
-  var perJ=Math.round(solde/j);
-  document.getElementById("moisMeta").textContent=(solde>=0?"+":"")+solde.toLocaleString("fr-FR")+" €";
-  var bar=document.getElementById("cashBar");
-  bar.style.width=Math.max(2,Math.min(100,perJ/25*100))+"%";
-  document.getElementById("cashBarWrap").className="bar"+(perJ<10?" coral":perJ<18?" gold":"");
-  document.getElementById("cashNote").textContent=
-    j+" jours avant le 20 · "+perJ+" €/jour disponibles. "+
-    (perJ<10?"Sous 10 €/jour : aucune dépense non prévue jusqu'au salaire.":
-     perJ<18?"Marge étroite. Rien d'imprévu cette quinzaine.":"Marge correcte. Le surplus va à l'épargne, pas au confort.");
-}
-
-/* ══════════ DÉFIS ══════════ */
-function agg(){
-  var a={dw:0,fajr:0,lect:0,sport:0,rlz:0,days:0};
-  for(var k in S.days){var d=S.days[k];a.dw+=d.dw||0;
-    if(d.fajr)a.fajr++; if(d.lect)a.lect++; if(d.sport)a.sport++; if(d.rlz)a.rlz++; a.days++}
-  return a;
-}
-function weeksAt(t){
-  var n=0,m=new Date(MON);
-  for(var i=0;i<60;i++){
-    var p=0,mx=0,any=0;
-    for(var j=0;j<7;j++){var d=new Date(m);d.setDate(m.getDate()+j);
-      if(d>NOW)continue; var v=S.days[ymd(d)];if(v)any=1;
-      p+=dayPts(v||{},d.getDay());mx+=dayMax(d.getDay())}
-    if(!any||!mx)break;
-    if(p/mx*100>=t)n++;else break;
-    m.setDate(m.getDate()-7);
-  }
-  return n;
-}
-function renderChals(){
-  var a=agg();
-  var C=[
-   {i:"🕌",n:"Fajr — 30 jours d'affilée",v:streak("fajr"),t:30},
-   {i:"🚀",n:"Medoq — 100 heures de fond",v:Math.round(a.dw/60),t:100,u:"h"},
-   {i:"📖",n:"Lecture — 100 jours",v:a.lect,t:100},
-   {i:"📨",n:"Réseau — 50 relances",v:a.rlz,t:50},
-   {i:"🏋️",n:"Corps — 100 séances",v:a.sport,t:100},
-   {i:"🔥",n:"Fer — 12 semaines à 80 %",v:weeksAt(80),t:12}
-  ];
-  var box=document.getElementById("chals");box.innerHTML="";var won=0;
-  C.forEach(function(c){
-    var done=c.v>=c.t; if(done)won++;
-    var d=document.createElement("div");d.className="chal"+(done?" done":"");
-    d.innerHTML='<span class="ic">'+c.i+'</span><span class="b"><span class="n">'+c.n+
-      '<em>'+(done?"✦ remporté":c.v+(c.u||"")+" / "+c.t+(c.u||""))+'</em></span>'+
-      '<span class="bar'+(done?" gold":"")+'"><i style="width:'+Math.min(100,c.v/c.t*100)+'%"></i></span></span>';
-    box.appendChild(d);
-  });
-  document.getElementById("chalMeta").textContent=won+" remporté"+(won>1?"s":"");
-}
-
-/* ══════════ LISTES ══════════ */
-function renderJalons(){
-  var b=document.getElementById("jalons");b.innerHTML="";var n=0;
-  S.jalons.forEach(function(x,i){
-    if(x.d)n++;
-    var d=document.createElement("div");d.className="li"+(x.d?" on":"");
-    d.innerHTML='<span class="box">✓</span><span class="b"><span class="n"></span></span><button class="del">×</button>';
-    d.querySelector(".n").textContent=x.n;
-    d.querySelector(".box").onclick=function(){x.d=x.d?0:1;save();renderJalons();};
-    d.querySelector(".b").onclick=function(){x.d=x.d?0:1;save();renderJalons();};
-    d.querySelector(".del").onclick=function(){S.jalons.splice(i,1);save();renderJalons();};
-    b.appendChild(d);
-  });
-  document.getElementById("jMeta").textContent=n+"/"+S.jalons.length;
-}
-function renderRelances(){
-  var b=document.getElementById("relances");b.innerHTML="";var stale=0;
-  S.relances.forEach(function(x,i){
-    var old=!x.last||((NOW-new Date(x.last))/864e5>14); if(old)stale++;
-    var d=document.createElement("div");d.className="li";
-    d.innerHTML='<span class="b"><span class="n"></span><span class="d"></span></span>'+
-      '<button class="rlz'+(old?"":" done")+'">'+(x.last?new Date(x.last).toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"}):"relancer")+'</button>'+
-      '<button class="del">×</button>';
-    d.querySelector(".n").textContent=x.n;
-    d.querySelector(".d").textContent=x.d||"";
-    d.querySelector(".rlz").onclick=function(){x.last=TODAY;T.rlz=true;save();renderAll();};
-    d.querySelector(".del").onclick=function(){S.relances.splice(i,1);save();renderRelances();};
-    b.appendChild(d);
-  });
-  if(!S.relances.length)b.innerHTML='<div class="note">Ajoute les personnes que tu dois relancer. Un contact non relancé depuis 14 jours repasse en vert pâle : c\'est ton signal.</div>';
-  document.getElementById("rMeta").textContent=S.relances.length?(stale?stale+" à relancer":"à jour"):"—";
-}
-function renderActions(){
-  var b=document.getElementById("actions");b.innerHTML="";var open=0;
-  var TAG=["","🔴 avant lundi","🟠 cette semaine","⚪ ce mois-ci"];
-  S.actions.slice().sort(function(a,c){return (a.done-c.done)||((a.p||3)-(c.p||3))}).forEach(function(x){
-    if(!x.done)open++;
-    var i=S.actions.indexOf(x);
-    var d=document.createElement("div");d.className="li"+(x.done?" on":"");
-    d.innerHTML='<span class="box">✓</span><span class="b"><span class="n"></span><span class="d"></span>'+
-      (x.done?"":'<span class="tag t'+(x.p||3)+'">'+TAG[x.p||3]+'</span>')+'</span><button class="del">×</button>';
-    d.querySelector(".n").textContent=x.n;
-    d.querySelector(".d").textContent=x.d||"";
-    d.querySelector(".box").onclick=function(){x.done=x.done?0:1;save();renderActions();renderFocus();};
-    d.querySelector(".del").onclick=function(){S.actions.splice(i,1);save();renderActions();renderFocus();};
-    b.appendChild(d);
-  });
-  if(!S.actions.length)b.innerHTML='<div class="note">Vide. Utilise « Importer » ou ajoute tes actions ci-dessous.</div>';
-  document.getElementById("aMeta").textContent=S.actions.length?open+" ouverte"+(open>1?"s":""):"—";
-}
-function renderFocus(){
-  var urg=S.actions.filter(function(x){return !x.done&&(x.p||3)===1});
-  var h=document.getElementById("focusHint");
-  if(urg.length) h.innerHTML="<b>"+urg.length+" action"+(urg.length>1?"s":"")+" à faire avant lundi.</b> "+
-    "Tant qu'elles sont là, elles coûtent plus d'énergie à porter qu'à faire.";
-  else h.innerHTML="Rien d'urgent. C'est le meilleur moment pour avancer sur Medoq, pas pour se reposer.";
-}
-document.querySelectorAll("[data-add]").forEach(function(btn){
-  btn.onclick=function(){
-    var w=btn.dataset.add;
-    var inp=document.getElementById(w==="jalons"?"jNew":w==="relances"?"rNew":"aNew");
-    var v=inp.value.trim(); if(!v)return;
-    if(w==="jalons")S.jalons.push({n:v,d:0});
-    else if(w==="relances")S.relances.push({n:v,d:"",last:""});
-    else S.actions.push({n:v,d:"",p:2,done:0});
-    inp.value="";save();renderJalons();renderRelances();renderActions();renderFocus();
-  };
-});
-
-/* ══════════ ÉNERGIE / TEXTES ══════════ */
-var PROMPTS=["Qu'est-ce que j'ai appris aujourd'hui ?","Quelle erreur ne dois-je pas refaire ?",
-"Qu'est-ce qui m'a fait perdre du temps ?","De quoi suis-je fier aujourd'hui ?",
-"Qu'est-ce que je repousse depuis trop longtemps ?","Qui dois-je contacter et que j'évite ?",
-"Est-ce que la journée a servi Medoq ?"];
-function renderEnergy(){
-  var b=document.getElementById("energy");b.innerHTML="";
-  for(var i=1;i<=10;i++){(function(i){
-    var x=document.createElement("button");x.textContent=i;
-    if(T.en===i)x.className="on";
-    x.onclick=function(){T.en=(T.en===i?0:i);save();renderEnergy();};
-    b.appendChild(x);})(i)}
-  document.getElementById("enMeta").textContent=T.en?T.en+"/10":"—";
-}
-function bindText(id,get,set){
-  var e=document.getElementById(id);e.value=get()||"";
-  e.oninput=function(){set(e.value);save()};
-}
-
-/* ══════════ RENDER ══════════ */
-function renderAll(){renderRit();renderScore();renderWeek();renderChals();renderEnergy();}
-
-bindText("bloc",function(){return T.bloc},function(v){T.bloc=v});
-bindText("note",function(){return T.note},function(v){T.note=v;renderScore()});
-bindText("vision",function(){return S.vision},function(v){S.vision=v});
-S.rev[WKID]=S.rev[WKID]||{};
-bindText("rv1",function(){return S.rev[WKID].a},function(v){S.rev[WKID].a=v});
-bindText("rv2",function(){return S.rev[WKID].b},function(v){S.rev[WKID].b=v});
-bindText("rv3",function(){return S.rev[WKID].c},function(v){S.rev[WKID].c=v});
-document.getElementById("notePrompt").textContent=PROMPTS[NOW.getDate()%PROMPTS.length];
-
-["cPat","cEpa","cPart","cVal"].forEach(function(id,i){
-  var k=["pat","epa","part","val"][i];
-  var e=document.getElementById(id); if(S.cap[k])e.value=S.cap[k];
-  e.oninput=renderCap;
-});
-["mIn","mOut"].forEach(function(id,i){
-  var k=["in","out"][i];var e=document.getElementById(id);
-  if(S.mois[k])e.value=S.mois[k]; e.oninput=renderMois;
-});
-
-renderAll();renderPlan(ECOLE?"eco":"ent");renderCap();renderMois();
-renderJalons();renderRelances();renderActions();renderFocus();
-
-/* ══════════ NAV ══════════ */
-document.querySelectorAll("nav button").forEach(function(b){
-  b.onclick=function(){
-    document.querySelectorAll("nav button").forEach(function(x){x.className=""});
-    b.className="on";
-    document.querySelectorAll(".page").forEach(function(p){p.className="page"});
-    document.getElementById("p-"+b.dataset.p).className="page on";
-    window.scrollTo(0,0);
-  };
-});
-
-/* ══════════ DONNÉES ══════════ */
-document.getElementById("exp").onclick=function(){
-  var a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:"application/json"}));
-  a.download="cap2030-"+TODAY+".json";a.click();
-};
-document.getElementById("imp").onclick=function(){document.getElementById("impFile").click()};
-document.getElementById("impFile").onchange=function(e){
-  var f=e.target.files[0];if(!f)return;var r=new FileReader();
-  r.onload=function(){try{localStorage.setItem(KEY,r.result);location.reload()}catch(x){alert("Fichier illisible")}};
-  r.readAsText(f);
-};
-document.getElementById("rst").onclick=function(){
-  if(confirm("Tout effacer ? Cette action est définitive.")){localStorage.removeItem(KEY);location.reload()}
-};
-
-/* rollover : si la date change pendant que l'app reste ouverte */
-setInterval(function(){if(ymd(new Date())!==TODAY)location.reload()},60000);
-</script>
+<script src="core.js"></script>
+<script src="focus.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
