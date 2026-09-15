@@ -331,7 +331,7 @@ function bindData() {
   $("tabEco").onclick = function () { renderPlan("eco"); };
 
   bindAdders(); bindNav(); bindData();
-  bindScrTarget(); bindCurfew(); bindTimer();
+  bindScrTarget(); bindCurfew(); bindTimer(); bindSetup();
 
   renderDay(); renderPlan(ECOLE ? "eco" : "ent");
   renderCap(); renderMois();

@@ -72,6 +72,59 @@ function bindScrTarget() {
   };
 }
 
+/* ─────────── CONFIGURATION DU TÉLÉPHONE ─────────── */
+/* Réglages à faire une fois. Une fois tous cochés, la carte se replie
+   pour ne plus encombrer l'onglet — elle reste rouvrable. */
+var SETUP = [
+  { k: "bed", n: "Le téléphone ne dort plus dans la chambre",
+    d: "Chargeur dans une autre pièce. Un réveil à 10 € remplace l'alarme." },
+  { k: "gray", n: "Écran en nuances de gris",
+    d: "Réglages → Accessibilité → Affichage et taille du texte → Filtres de couleur → Nuances de gris. "
+     + "Mets-le en triple-clic : Accessibilité → Raccourci d'accessibilité." },
+  { k: "notif", n: "Notifications : les humains seulement",
+    d: "Réglages → Notifications. Garde Téléphone, Messages, WhatsApp. Coupe tout le reste, pastilles rouges comprises." },
+  { k: "raise", n: "« Lever pour activer » désactivé",
+    d: "Réglages → Affichage et luminosité → Lever pour activer." },
+  { k: "home", n: "Écran d'accueil vidé",
+    d: "Une seule page : Téléphone, Messages, Appareil photo, Calendrier, CAP 2030. Le reste dans la bibliothèque d'apps." }
+];
+
+function renderSetup() {
+  S.cfg.setup = S.cfg.setup || {};
+  var done = SETUP.filter(function (s) { return S.cfg.setup[s.k]; }).length;
+  var all = done === SETUP.length;
+  var card = $("setupCard");
+
+  /* repliée par défaut une fois terminée, sauf si on l'a rouverte */
+  card.className = "card" + (all && !S.cfg.setupOpen ? " folded" : "");
+  $("setupMeta").textContent = all ? "✓ faite" : done + "/" + SETUP.length;
+  $("setupToggle").textContent = S.cfg.setupOpen ? "replier" : "revoir";
+  $("setupToggle").classList.toggle("hide", !all);
+
+  var box = $("setupList"); box.innerHTML = "";
+  SETUP.forEach(function (s) {
+    var on = !!S.cfg.setup[s.k];
+    var d = el("div", "li" + (on ? " on" : ""));
+    d.innerHTML = '<span class="box">✓</span><span class="b">' +
+      '<span class="n"></span><span class="d"></span></span>';
+    d.querySelector(".n").textContent = s.n;
+    d.querySelector(".d").textContent = s.d;
+    d.onclick = function () {
+      S.cfg.setup[s.k] = !S.cfg.setup[s.k];
+      hapt(); save();
+      var now = SETUP.filter(function (x) { return S.cfg.setup[x.k]; }).length;
+      if (now === SETUP.length) { S.cfg.setupOpen = false; toast("Configuration terminée. Le plus dur est fait."); }
+      renderSetup();
+    };
+    box.appendChild(d);
+  });
+}
+function bindSetup() {
+  $("setupToggle").onclick = function () {
+    S.cfg.setupOpen = !S.cfg.setupOpen; hapt(); save(); renderSetup();
+  };
+}
+
 /* ─────────── COUVRE-FEU ─────────── */
 function curfewMinutes() {
   var p = (S.cfg.curfew || "22:00").split(":");
@@ -279,5 +332,5 @@ function bindTimer() {
 
 /* ─────────── RENDU DU MODULE ─────────── */
 function renderFocus() {
-  renderScreen(); renderCurfew(); renderStreaks(); renderSessions(); renderNoPhone();
+  renderScreen(); renderSetup(); renderCurfew(); renderStreaks(); renderSessions(); renderNoPhone();
 }
